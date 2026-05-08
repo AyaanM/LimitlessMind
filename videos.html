@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Videos — Limitless Mind</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-logo">Limitless Mind</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="learning-path.html">Learning Path</a></li>
+      <li><a href="videos.html" class="active">Videos</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+    <a href="account.html" class="nav-account" title="Account">
+      <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+    </a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" style="padding-bottom:3rem;">
+    <div class="hero-badge">🎥 Learner Videos</div>
+    <h1>Watch &amp; <span>Learn</span></h1>
+    <p>Curated YouTube videos handpicked by our team — the best lessons from the world's top educators.</p>
+  </section>
+
+  <!-- SEARCH + FILTER -->
+  <section style="padding-top:0;padding-bottom:3.5rem;">
+    <div style="max-width:1100px;margin:0 auto;">
+      <!-- Search -->
+      <div style="position:relative;max-width:480px;margin-bottom:1.75rem;">
+        <svg style="position:absolute;left:0.85rem;top:50%;transform:translateY(-50%);width:16px;height:16px;fill:var(--muted);" viewBox="0 0 24 24"><path d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" stroke="var(--muted)" stroke-width="2" fill="none"/></svg>
+        <input
+          type="text"
+          placeholder="Search videos…"
+          style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:0.65rem 0.9rem 0.65rem 2.5rem;color:var(--text);font-size:0.9rem;font-family:var(--font);outline:none;"
+          onfocus="this.style.borderColor='var(--accent)'"
+          onblur="this.style.borderColor='var(--border)'"
+        />
+      </div>
+
+      <!-- Filters -->
+      <div class="filter-bar" style="margin-bottom:2rem;">
+        <button class="filter-btn active">All</button>
+        <button class="filter-btn">Machine Learning</button>
+        <button class="filter-btn">Neuroscience</button>
+        <button class="filter-btn">Productivity</button>
+        <button class="filter-btn">Mathematics</button>
+        <button class="filter-btn">Programming</button>
+        <button class="filter-btn">Physics</button>
+      </div>
+
+      <!-- Grid -->
+      <div class="grid grid-3">
+
+        <!-- Video 1 -->
+        <a href="https://www.youtube.com/watch?v=aircAruvnKk" target="_blank" rel="noopener" class="video-card">
+          <div class="video-thumb">
+            <img src="https://img.youtube.com/vi/aircAruvnKk/maxresdefault.jpg" alt="But what is a neural network?" loading="lazy"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+            <div class="video-thumb-placeholder" style="display:none;position:absolute;inset:0;">
+              <span style="font-size:2.5rem;">🧠</span>
+            </div>
+            <div class="play-btn">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+            <div class="video-duration">19:13</div>
+          </div>
+          <div class="video-body">
+            <div class="video-channel">3Blue1Brown</div>
+            <h4>But what is a neural network?</h4>
+            <div class="video-meta">
+              <span>Machine Learning</span>
+              <span>·</span>
+              <span>4.8M views</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Video 2 -->
+        <a href="https://www.youtube.com/watch?v=WXuK6gekU1Y" target="_blank" rel="noopener" class="video-card">
+          <div class="video-thumb">
+            <img src="https://img.youtube.com/vi/WXuK6gekU1Y/maxresdefault.jpg" alt="The Science of How the Brain Changes" loading="lazy"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+            <div class="video-thumb-placeholder" style="display:none;position:absolute;inset:0;">
+              <span style="font-size:2.5rem;">⚡</span>
+            </div>
+            <div class="play-btn">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+            <div class="video-duration">26:41</div>
+          </div>
+          <div class="video-body">
+            <div class="video-channel">Andrew Huberman</div>
+            <h4>The Science of How the Brain Changes Itself</h4>
+            <div class="video-meta">
+              <span>Neuroscience</span>
+              <span>·</span>
+              <span>3.2M views</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Video 3 -->
+        <a href="https://www.youtube.com/watch?v=_Xe8bGBqkZs" target="_blank" rel="noopener" class="video-card">
+          <div class="video-thumb">
+            <img src="https://img.youtube.com/vi/_Xe8bGBqkZs/maxresdefault.jpg" alt="Calculus — The Big Picture" loading="lazy"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+            <div class="video-thumb-placeholder" style="display:none;position:absolute;inset:0;">
+              <span style="font-size:2.5rem;">∞</span>
+            </div>
+            <div class="play-btn">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+            <div class="video-duration">17:04</div>
+          </div>
+          <div class="video-body">
+            <div class="video-channel">3Blue1Brown</div>
+            <h4>The Essence of Calculus</h4>
+            <div class="video-meta">
+              <span>Mathematics</span>
+              <span>·</span>
+              <span>9.1M views</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Video 4 -->
+        <a href="https://www.youtube.com/watch?v=arj7oStGLkU" target="_blank" rel="noopener" class="video-card">
+          <div class="video-thumb">
+            <img src="https://img.youtube.com/vi/arj7oStGLkU/maxresdefault.jpg" alt="How to Learn Faster" loading="lazy"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+            <div class="video-thumb-placeholder" style="display:none;position:absolute;inset:0;">
+              <span style="font-size:2.5rem;">🚀</span>
+            </div>
+            <div class="play-btn">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+            <div class="video-duration">14:28</div>
+          </div>
+          <div class="video-body">
+            <div class="video-channel">Andrew Huberman</div>
+            <h4>How to Learn Faster Using Science</h4>
+            <div class="video-meta">
+              <span>Productivity</span>
+              <span>·</span>
+              <span>5.7M views</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Video 5 -->
+        <a href="https://www.youtube.com/watch?v=GnR8SMwilzM" target="_blank" rel="noopener" class="video-card">
+          <div class="video-thumb">
+            <img src="https://img.youtube.com/vi/GnR8SMwilzM/maxresdefault.jpg" alt="Python for Beginners" loading="lazy"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+            <div class="video-thumb-placeholder" style="display:none;position:absolute;inset:0;">
+              <span style="font-size:2.5rem;">🐍</span>
+            </div>
+            <div class="play-btn">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+            <div class="video-duration">6:14:13</div>
+          </div>
+          <div class="video-body">
+            <div class="video-channel">freeCodeCamp</div>
+            <h4>Python for Beginners — Full Course</h4>
+            <div class="video-meta">
+              <span>Programming</span>
+              <span>·</span>
+              <span>38M views</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Video 6 -->
+        <a href="https://www.youtube.com/watch?v=iNlZ2JNJzQ8" target="_blank" rel="noopener" class="video-card">
+          <div class="video-thumb">
+            <img src="https://img.youtube.com/vi/iNlZ2JNJzQ8/maxresdefault.jpg" alt="Quantum Mechanics" loading="lazy"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+            <div class="video-thumb-placeholder" style="display:none;position:absolute;inset:0;">
+              <span style="font-size:2.5rem;">⚛️</span>
+            </div>
+            <div class="play-btn">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+            <div class="video-duration">22:59</div>
+          </div>
+          <div class="video-body">
+            <div class="video-channel">Veritasium</div>
+            <h4>Quantum Mechanics — The Weirdness Explained</h4>
+            <div class="video-meta">
+              <span>Physics</span>
+              <span>·</span>
+              <span>12.4M views</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Video 7 -->
+        <a href="https://www.youtube.com/watch?v=6BEMEbUbME4" target="_blank" rel="noopener" class="video-card">
+          <div class="video-thumb">
+            <img src="https://img.youtube.com/vi/6BEMEbUbME4/maxresdefault.jpg" alt="Deep Learning" loading="lazy"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+            <div class="video-thumb-placeholder" style="display:none;position:absolute;inset:0;">
+              <span style="font-size:2.5rem;">🔬</span>
+            </div>
+            <div class="play-btn">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+            <div class="video-duration">38:17</div>
+          </div>
+          <div class="video-body">
+            <div class="video-channel">Andrej Karpathy</div>
+            <h4>Deep Learning from Scratch in Python</h4>
+            <div class="video-meta">
+              <span>Machine Learning</span>
+              <span>·</span>
+              <span>2.1M views</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Video 8 -->
+        <a href="https://www.youtube.com/watch?v=IdTMDpizis8" target="_blank" rel="noopener" class="video-card">
+          <div class="video-thumb">
+            <img src="https://img.youtube.com/vi/IdTMDpizis8/maxresdefault.jpg" alt="How Memory Works" loading="lazy"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+            <div class="video-thumb-placeholder" style="display:none;position:absolute;inset:0;">
+              <span style="font-size:2.5rem;">💡</span>
+            </div>
+            <div class="play-btn">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+            <div class="video-duration">11:33</div>
+          </div>
+          <div class="video-body">
+            <div class="video-channel">Kurzgesagt</div>
+            <h4>How Memory Works — and How to Improve It</h4>
+            <div class="video-meta">
+              <span>Neuroscience</span>
+              <span>·</span>
+              <span>8.9M views</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- Video 9 -->
+        <a href="https://www.youtube.com/watch?v=O96fE1E-rf8" target="_blank" rel="noopener" class="video-card">
+          <div class="video-thumb">
+            <img src="https://img.youtube.com/vi/O96fE1E-rf8/maxresdefault.jpg" alt="The Power of Habit" loading="lazy"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+            <div class="video-thumb-placeholder" style="display:none;position:absolute;inset:0;">
+              <span style="font-size:2.5rem;">🔁</span>
+            </div>
+            <div class="play-btn">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+            <div class="video-duration">15:44</div>
+          </div>
+          <div class="video-body">
+            <div class="video-channel">Thomas Frank</div>
+            <h4>The Science of Building Good Habits</h4>
+            <div class="video-meta">
+              <span>Productivity</span>
+              <span>·</span>
+              <span>6.3M views</span>
+            </div>
+          </div>
+        </a>
+
+      </div>
+
+      <!-- Load More -->
+      <div style="text-align:center;margin-top:3rem;">
+        <button class="btn btn-ghost" style="padding:0.7rem 2rem;">Load More Videos</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Limitless Mind</div>
+    <p>© 2026 Limitless Mind. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+  </script>
+
+</body>
+</html>
