@@ -44,12 +44,7 @@ export function Navbar({ profile }: NavbarProps) {
             href="/home"
             className="flex items-center gap-2.5 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent">
-              <span className="text-sm font-bold text-white" aria-hidden="true">AE</span>
-            </div>
-            <span className="hidden font-semibold text-foreground sm:block">
-              Autism Edmonton
-            </span>
+            <img src="/img/logo.png" alt="Autism Edmonton" className="h-10 rounded-lg" />
           </Link>
 
           <div className="flex items-center gap-2">
