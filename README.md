@@ -89,3 +89,13 @@ All colors are CSS custom properties defined in `app/globals.css` and mapped in 
 | `accent` | `#3D8FB5` (calm blue) | `#5BAAD6` |
 | `sage` | `#4FA87A` (soft green) | `#6BBE94` |
 | `card` | `#FFFFFF` | `#172B3A` |
+
+## Intellectual Property and Usage Rights
+
+This project was created as part of natIgnite 2026 in collaboration with Autism Edmonton as the problem provider.
+
+Under the natIgnite 2026 Problem Provider Agreement, the project contributors retain ownership of the innovations they created during the event. Autism Edmonton, as the problem provider, has been granted a non-exclusive, worldwide, royalty-free, perpetual, and irrevocable license to use, modify, reproduce, distribute, display, create derivative works from, and commercialize the project outputs, including use in learning platforms, training materials, video content, and subscription-based services.
+
+The project contributors may also continue to use, build upon, and commercialize their work independently, subject to the terms of the agreement.
+
+This repository is provided for project demonstration, documentation, and development purposes.
