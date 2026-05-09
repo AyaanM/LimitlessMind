@@ -2,11 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { Bookmark, BookmarkCheck, CheckCircle, ChevronLeft, Clock, Phone, Award } from 'lucide-react'
+import { Bookmark, BookmarkCheck, CheckCircle, ChevronLeft, Clock, Phone, Award, ExternalLink, Play } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-import { VimeoPlayer } from '@/components/video/VimeoPlayer'
 import { VideoCard } from '@/components/video/VideoCard'
-import { AISummaryBox } from '@/components/ai/AISummaryBox'
 import { AIChatBox } from '@/components/ai/AIChatBox'
 import { PremiumGate } from '@/components/shared/PremiumGate'
 import { PageLoader } from '@/components/shared/LoadingSpinner'
@@ -14,8 +12,8 @@ import { SubscriptionBadge } from '@/components/shared/SubscriptionBadge'
 import { SpeakerCard } from '@/components/shared/SpeakerCard'
 import { DiscussionSection } from '@/components/shared/DiscussionSection'
 import { CATEGORY_COLORS, CATEGORY_ICONS } from '@/lib/constants'
-import { formatDuration, cn } from '@/lib/utils'
-import type { Video, VideoActivity, VideoTranscriptSegment, Speaker } from '@/types/database'
+import { getYouTubeThumbnail, getYouTubeUrl, formatDuration, cn } from '@/lib/utils'
+import type { Video, VideoActivity, Speaker } from '@/types/database'
 import Link from 'next/link'
 
 export default function VideoPage() {
@@ -24,16 +22,13 @@ export default function VideoPage() {
   const [video, setVideo] = useState<Video | null>(null)
   const [related, setRelated] = useState<Video[]>([])
   const [activities, setActivities] = useState<VideoActivity[]>([])
-  const [segments, setSegments] = useState<VideoTranscriptSegment[]>([])
   const [speakers, setSpeakers] = useState<Speaker[]>([])
   const [isSaved, setIsSaved] = useState(false)
   const [isCompleted, setIsCompleted] = useState(false)
-  const [progressSeconds, setProgressSeconds] = useState(0)
   const [isPremium, setIsPremium] = useState(false)
   const [userId, setUserId] = useState<string | null>(null)
   const [userDisplayName, setUserDisplayName] = useState<string>('Community member')
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'transcript' | 'activities'>('transcript')
 
   useEffect(() => {
     async function load() {
@@ -48,7 +43,6 @@ export default function VideoPage() {
         { data: savedRow },
         { data: progress },
         { data: acts },
-        { data: segs },
         { data: profile },
         { data: vsRows },
       ] = await Promise.all([
@@ -57,7 +51,6 @@ export default function VideoPage() {
         supabase.from('saved_videos').select('id').eq('user_id', user.id).eq('video_id', id).maybeSingle(),
         supabase.from('watch_progress').select('*').eq('user_id', user.id).eq('video_id', id).maybeSingle(),
         supabase.from('video_activities').select('*').eq('video_id', id),
-        supabase.from('video_transcript_segments').select('*').eq('video_id', id).order('start_time'),
         supabase.from('profiles').select('display_name').eq('id', user.id).single(),
         (supabase as any).from('video_speakers').select('speaker_id').eq('video_id', id),
       ])
@@ -66,69 +59,36 @@ export default function VideoPage() {
       if (!vidData) { router.push('/library'); return }
 
       const subData = sub as { plan: string; status: string } | null
-      const progressData = progress as { completed: boolean; progress_seconds: number } | null
+      const progressData = progress as { completed: boolean } | null
       const premium = subData?.plan === 'premium' && subData?.status === 'active'
       setIsPremium(premium)
       setVideo(vidData)
       setIsSaved(!!savedRow)
       setIsCompleted(progressData?.completed ?? false)
-      setProgressSeconds(progressData?.progress_seconds ?? 0)
       setActivities((acts ?? []) as VideoActivity[])
-      setSegments((segs ?? []) as VideoTranscriptSegment[])
       setUserDisplayName((profile as any)?.display_name ?? 'Community member')
 
-      // Load structured speaker profiles
       const speakerIds = ((vsRows ?? []) as { speaker_id: string }[]).map((r) => r.speaker_id)
       if (speakerIds.length > 0) {
-        const { data: spData } = await (supabase as any)
-          .from('speakers')
-          .select('*')
-          .in('id', speakerIds)
+        const { data: spData } = await (supabase as any).from('speakers').select('*').in('id', speakerIds)
         setSpeakers((spData ?? []) as Speaker[])
       }
 
-      // Load related videos — prefer same topic, then same category, excluding current
       let relatedVids: Video[] = []
       if (vidData.topic_id) {
-        const { data: topicRelated } = await supabase
-          .from('videos')
-          .select('*')
-          .eq('topic_id', vidData.topic_id)
-          .neq('id', id)
-          .limit(4)
+        const { data: topicRelated } = await supabase.from('videos').select('*').eq('topic_id', vidData.topic_id).neq('id', id).limit(4)
         relatedVids = (topicRelated ?? []) as Video[]
       }
       if (relatedVids.length < 4) {
-        const { data: catRelated } = await supabase
-          .from('videos')
-          .select('*')
-          .eq('category', vidData.category)
-          .neq('id', id)
-          .limit(4 - relatedVids.length)
+        const { data: catRelated } = await supabase.from('videos').select('*').eq('category', vidData.category).neq('id', id).limit(4 - relatedVids.length)
         const existing = new Set(relatedVids.map((v) => v.id))
         relatedVids = [...relatedVids, ...((catRelated ?? []) as Video[]).filter((v) => !existing.has(v.id))]
       }
       setRelated(relatedVids.filter((v) => !v.is_premium || premium))
-
       setLoading(false)
     }
     load()
   }, [id, router])
-
-  const handleProgress = useCallback(async (seconds: number) => {
-    if (!userId || !video) return
-    setProgressSeconds(seconds)
-    const completed = video.duration_seconds ? seconds >= video.duration_seconds * 0.9 : false
-    const supabase = createClient()
-    await (supabase.from('watch_progress') as any).upsert({
-      user_id: userId,
-      video_id: video.id,
-      progress_seconds: seconds,
-      completed,
-      last_watched_at: new Date().toISOString(),
-    }, { onConflict: 'user_id,video_id' })
-    if (completed) setIsCompleted(true)
-  }, [userId, video])
 
   const handleSaveToggle = useCallback(async () => {
     if (!userId || !video) return
@@ -143,7 +103,7 @@ export default function VideoPage() {
   }, [isSaved, userId, video])
 
   const handleMarkComplete = useCallback(async () => {
-    if (!userId || !video) return
+    if (!userId || !video || isCompleted) return
     const supabase = createClient()
     await (supabase.from('watch_progress') as any).upsert({
       user_id: userId,
@@ -153,7 +113,7 @@ export default function VideoPage() {
       last_watched_at: new Date().toISOString(),
     }, { onConflict: 'user_id,video_id' })
     setIsCompleted(true)
-  }, [userId, video])
+  }, [userId, video, isCompleted])
 
   if (loading) return <PageLoader />
   if (!video) return null
@@ -161,10 +121,11 @@ export default function VideoPage() {
   const isLocked = video.is_premium && !isPremium
   const catColor = CATEGORY_COLORS[video.category] ?? 'bg-surface text-muted-foreground'
   const catIcon = CATEGORY_ICONS[video.category] ?? '📹'
+  const thumbnail = video.thumbnail_url ?? getYouTubeThumbnail(video.youtube_id)
+  const youtubeUrl = getYouTubeUrl(video.youtube_id)
 
   return (
     <div className="space-y-8">
-      {/* Back */}
       <Link
         href="/library"
         className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded"
@@ -175,16 +136,40 @@ export default function VideoPage() {
       <div className="grid gap-8 lg:grid-cols-3">
         {/* Main column */}
         <div className="lg:col-span-2 space-y-6">
-          {isLocked ? (
-            <PremiumGate title="Premium Video" message="This video is part of the Premium plan. Upgrade to watch it and access all premium content." />
-          ) : (
-            <VimeoPlayer
-              vimeoId={video.vimeo_id}
-              title={video.title}
-              startAt={progressSeconds}
-              onProgress={handleProgress}
-            />
-          )}
+
+          {/* Thumbnail / watch hero */}
+          <div className="relative overflow-hidden rounded-xl bg-foreground/5">
+            <div className="aspect-video">
+              <img
+                src={thumbnail}
+                alt={video.title}
+                className="h-full w-full object-cover"
+              />
+            </div>
+            {isLocked ? (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-foreground/60 backdrop-blur-[2px]">
+                <p className="text-base font-semibold text-white">Premium video</p>
+                <Link
+                  href="/subscription"
+                  className="rounded-lg bg-accent px-6 py-2.5 text-sm font-semibold text-white hover:bg-accent-hover transition-colors"
+                >
+                  Upgrade to watch
+                </Link>
+              </div>
+            ) : (
+              <a
+                href={youtubeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="absolute inset-0 flex items-center justify-center bg-foreground/30 opacity-0 hover:opacity-100 transition-opacity focus-visible:opacity-100 focus-visible:outline-none"
+                aria-label={`Watch "${video.title}" on YouTube`}
+              >
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/90 shadow-xl">
+                  <Play className="h-7 w-7 translate-x-0.5 text-foreground" aria-hidden="true" />
+                </div>
+              </a>
+            )}
+          </div>
 
           {/* Meta */}
           <div className="space-y-4">
@@ -213,18 +198,12 @@ export default function VideoPage() {
                   {formatDuration(video.duration_seconds)}
                 </span>
               )}
-              {video.estimated_learning_minutes > 0 && (
-                <span className="text-xs text-muted-foreground bg-surface border border-border rounded-full px-2.5 py-1">
-                  {video.estimated_learning_minutes} min learning
-                </span>
-              )}
             </div>
 
             {video.description && (
               <p className="text-sm leading-relaxed text-muted-foreground">{video.description}</p>
             )}
 
-            {/* Tags */}
             {video.tags.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
                 {video.tags.map((tag) => (
@@ -235,8 +214,19 @@ export default function VideoPage() {
               </div>
             )}
 
-            {/* Action buttons */}
+            {/* Actions */}
             <div className="flex flex-wrap gap-3">
+              {!isLocked && (
+                <a
+                  href={youtubeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                >
+                  <ExternalLink className="h-4 w-4" aria-hidden="true" /> Watch on YouTube
+                </a>
+              )}
+
               <button
                 onClick={handleSaveToggle}
                 className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
@@ -283,72 +273,28 @@ export default function VideoPage() {
             </div>
           )}
 
-          {/* AI Summary */}
-          <AISummaryBox videoId={video.id} isPremiumUser={isPremium} />
-
-          {/* Transcript + Activities tabs */}
-          <div className="rounded-xl border border-border bg-card shadow-card overflow-hidden">
-            <div className="flex border-b border-border" role="tablist">
-              {(['transcript', 'activities'] as const).map((tab) => (
-                <button
-                  key={tab}
-                  role="tab"
-                  aria-selected={activeTab === tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={cn(
-                    'flex-1 px-4 py-3 text-sm font-medium capitalize transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset',
-                    activeTab === tab
-                      ? 'border-b-2 border-accent text-accent'
-                      : 'text-muted-foreground hover:text-foreground'
-                  )}
-                >
-                  {tab}
-                  {tab === 'activities' && activities.length > 0 && (
-                    <span className="ml-2 rounded-full bg-accent-light px-1.5 py-0.5 text-xs text-accent">
-                      {activities.length}
+          {/* Activities */}
+          {activities.length > 0 && (
+            <div className="rounded-xl border border-border bg-card shadow-card overflow-hidden">
+              <div className="border-b border-border px-5 py-3">
+                <h2 className="text-sm font-semibold text-foreground">
+                  Learning activities
+                  <span className="ml-2 rounded-full bg-accent-light px-1.5 py-0.5 text-xs text-accent">{activities.length}</span>
+                </h2>
+              </div>
+              <div className="p-5 space-y-4">
+                {activities.map((act) => (
+                  <div key={act.id} className="rounded-lg border border-border bg-surface p-4 space-y-2">
+                    <p className="font-medium text-foreground">{act.title}</p>
+                    {act.description && <p className="text-sm text-muted-foreground">{act.description}</p>}
+                    <span className="inline-block rounded px-2 py-0.5 text-xs font-medium bg-accent-light text-accent capitalize">
+                      {act.activity_type}
                     </span>
-                  )}
-                </button>
-              ))}
-            </div>
-
-            <div className="p-5" role="tabpanel">
-              {activeTab === 'transcript' && (
-                segments.length > 0 ? (
-                  <div className="space-y-3 max-h-80 overflow-y-auto pr-1 scrollbar-thin">
-                    {segments.map((seg) => (
-                      <div key={seg.id} className="flex gap-3">
-                        <span className="shrink-0 text-xs text-muted-foreground pt-0.5 w-10">
-                          {Math.floor(seg.start_time / 60)}:{String(Math.floor(seg.start_time % 60)).padStart(2,'0')}
-                        </span>
-                        <p className="text-sm text-foreground">{seg.text}</p>
-                      </div>
-                    ))}
                   </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">No transcript available for this video yet.</p>
-                )
-              )}
-
-              {activeTab === 'activities' && (
-                activities.length > 0 ? (
-                  <div className="space-y-4">
-                    {activities.map((act) => (
-                      <div key={act.id} className="rounded-lg border border-border bg-surface p-4 space-y-2">
-                        <p className="font-medium text-foreground">{act.title}</p>
-                        {act.description && <p className="text-sm text-muted-foreground">{act.description}</p>}
-                        <span className="inline-block rounded px-2 py-0.5 text-xs font-medium bg-accent-light text-accent capitalize">
-                          {act.activity_type}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">No activities for this video yet.</p>
-                )
-              )}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Discussion */}
           {userId && (
@@ -362,20 +308,18 @@ export default function VideoPage() {
 
         {/* Sidebar */}
         <div className="space-y-6">
-          {/* AI Chat */}
           {isPremium ? (
             <AIChatBox context={video.title} />
           ) : (
             <PremiumGate
               title="AI Learning Assistant"
-              message="Ask questions about this video and get helpful answers — available with Premium."
+              message="Ask questions about this topic and get helpful answers — available with Premium."
             />
           )}
 
-          {/* Related videos */}
           {related.length > 0 && (
             <div className="space-y-3">
-              <h2 className="text-sm font-semibold text-foreground">Related sessions</h2>
+              <h2 className="text-sm font-semibold text-foreground">Related videos</h2>
               <div className="space-y-3">
                 {related.map((rv) => (
                   <VideoCard key={rv.id} video={rv} isPremiumUser={isPremium} />

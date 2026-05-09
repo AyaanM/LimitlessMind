@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Bookmark, BookmarkCheck, Lock, Clock } from 'lucide-react'
 import { SubscriptionBadge } from '@/components/shared/SubscriptionBadge'
 import { CATEGORY_COLORS, CATEGORY_ICONS } from '@/lib/constants'
-import { formatDuration, getVimeoThumbnail, getProgressPercent, cn } from '@/lib/utils'
+import { formatDuration, getYouTubeThumbnail, getProgressPercent, cn } from '@/lib/utils'
 import type { Video } from '@/types/database'
 
 interface VideoCardProps {
@@ -24,7 +24,7 @@ export function VideoCard({
 }: VideoCardProps) {
   const isLocked = video.is_premium && !isPremiumUser
   const progressPct = getProgressPercent(progressSeconds, video.duration_seconds)
-  const thumbnail = video.thumbnail_url ?? getVimeoThumbnail(video.vimeo_id, 'medium')
+  const thumbnail = video.thumbnail_url ?? getYouTubeThumbnail(video.youtube_id)
   const categoryColor = CATEGORY_COLORS[video.category] ?? 'bg-surface text-muted-foreground'
   const categoryIcon = CATEGORY_ICONS[video.category] ?? '📹'
 

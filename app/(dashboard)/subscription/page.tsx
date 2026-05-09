@@ -135,16 +135,6 @@ export default function SubscriptionPage() {
         </div>
       </div>
 
-      {/* Dev note */}
-      <div className="rounded-xl bg-premium-light border border-premium/20 p-5 text-sm text-muted-foreground max-w-2xl">
-        <p className="font-semibold text-premium mb-1">Development mode</p>
-        <p>
-          Stripe payment integration is ready to be connected. Until then, the &quot;Upgrade&quot; button
-          activates Premium directly in the database. Set{' '}
-          <code className="rounded bg-card px-1 py-0.5 font-mono text-xs">NEXT_PUBLIC_MOCK_SUBSCRIPTION=true</code>{' '}
-          to give all users premium access for testing.
-        </p>
-      </div>
     </div>
   )
 }

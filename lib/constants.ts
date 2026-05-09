@@ -54,7 +54,6 @@ export const SUBSCRIPTION_PLANS = {
     features: [
       'Access to all free videos',
       'Basic games (Emotion Match, Calm Breathing, Memory Cards)',
-      'Video transcripts',
       'Save videos to your list',
       'Track your progress',
     ],

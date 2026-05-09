@@ -3,13 +3,12 @@
 
 -- ============================================================
 -- VIDEOS (10 across 5 categories, mix free/premium)
--- Vimeo IDs are real public Vimeo videos used as placeholders
--- Replace with Autism Edmonton's own Vimeo content in production
+-- YouTube IDs are placeholder video IDs — replace with real YouTube video IDs in production
 -- ============================================================
-INSERT INTO videos (vimeo_id, title, description, category, speaker, duration_seconds, tags, is_premium, is_featured, is_new_this_month, is_autism_edmonton_pick, popularity_score) VALUES
+INSERT INTO videos (youtube_id, title, description, category, speaker, duration_seconds, tags, is_premium, is_featured, is_new_this_month, is_autism_edmonton_pick, popularity_score) VALUES
 
 -- Housing
-('76979871',
+('dQw4w9WgXcQ',
  'Understanding Housing Options',
  'A clear overview of housing options available for autistic adults, including supported living, independent living, and shared arrangements. Learn what questions to ask and what to expect.',
  'Housing',
@@ -18,7 +17,7 @@ INSERT INTO videos (vimeo_id, title, description, category, speaker, duration_se
  ARRAY['housing','independent living','support','adults'],
  FALSE, TRUE, TRUE, TRUE, 85),
 
-('148751763',
+('9bZkp7q19f0',
  'Navigating Housing Applications',
  'Step-by-step guidance on applying for housing support programs in Alberta, including documentation, timelines, and who to contact for help.',
  'Housing',
@@ -28,7 +27,7 @@ INSERT INTO videos (vimeo_id, title, description, category, speaker, duration_se
  TRUE, FALSE, FALSE, FALSE, 62),
 
 -- Employment
-('209078728',
+('kJQP7kiw5Fk',
  'Preparing for Your First Job Interview',
  'Practical tips for autistic job seekers: how to prepare answers, what to wear, how to communicate your needs, and what accommodations you can request.',
  'Employment',
@@ -37,7 +36,7 @@ INSERT INTO videos (vimeo_id, title, description, category, speaker, duration_se
  ARRAY['employment','interview','job search','accommodations'],
  FALSE, TRUE, TRUE, FALSE, 91),
 
-('253989945',
+('JGwWNGJdvx8',
  'Workplace Accommodations You Can Ask For',
  'A detailed guide to understanding your rights and requesting reasonable accommodations at work, including sensory, scheduling, and communication supports.',
  'Employment',
@@ -47,7 +46,7 @@ INSERT INTO videos (vimeo_id, title, description, category, speaker, duration_se
  TRUE, FALSE, FALSE, TRUE, 74),
 
 -- Mental Health
-('322244877',
+('fJ9rUzIMcZQ',
  'Understanding Anxiety and Autism',
  'This video explores the connection between autism and anxiety, common triggers, and gentle strategies for managing overwhelming feelings day to day.',
  'Mental Health',
@@ -56,7 +55,7 @@ INSERT INTO videos (vimeo_id, title, description, category, speaker, duration_se
  ARRAY['mental health','anxiety','coping','self-care'],
  FALSE, FALSE, TRUE, TRUE, 88),
 
-('355757424',
+('YQHsXMglC9A',
  'Building a Calm-Down Toolkit',
  'Learn how to create a personalized collection of calming strategies and sensory tools that work for you when emotions feel too big.',
  'Mental Health',
@@ -66,7 +65,7 @@ INSERT INTO videos (vimeo_id, title, description, category, speaker, duration_se
  TRUE, FALSE, FALSE, FALSE, 55),
 
 -- Relationships
-('169507058',
+('OPf0YbXqDm0',
  'Making and Keeping Friendships',
  'A supportive guide to understanding social connections, navigating friendships, and communicating needs clearly with people you care about.',
  'Relationships',
@@ -75,7 +74,7 @@ INSERT INTO videos (vimeo_id, title, description, category, speaker, duration_se
  ARRAY['relationships','friendships','social skills','communication'],
  FALSE, FALSE, FALSE, TRUE, 79),
 
-('824804225',
+('hT_nvWreIhg',
  'Setting Healthy Boundaries',
  'Understanding what boundaries are, why they matter, and how to communicate them clearly and kindly in different types of relationships.',
  'Relationships',
@@ -85,7 +84,7 @@ INSERT INTO videos (vimeo_id, title, description, category, speaker, duration_se
  TRUE, FALSE, TRUE, FALSE, 67),
 
 -- Identity
-('76979871',  -- using same vimeo_id is not allowed in practice; using variant
+('L_jWHffIx5E',
  'Understanding Your Autistic Identity',
  'Exploring what it means to be autistic, the strengths of neurodiversity, and how to build a positive sense of self in a neurotypical world.',
  'Identity',
@@ -94,7 +93,7 @@ INSERT INTO videos (vimeo_id, title, description, category, speaker, duration_se
  ARRAY['identity','autism','neurodiversity','self-acceptance'],
  FALSE, TRUE, FALSE, TRUE, 82),
 
-('209078728',  -- variant ID for demo purposes
+('CevxZvSJLk8',
  'Self-Advocacy: Speaking Up for Yourself',
  'How to identify your needs, communicate them effectively, and advocate for yourself in educational, workplace, and community settings.',
  'Identity',
@@ -103,9 +102,6 @@ INSERT INTO videos (vimeo_id, title, description, category, speaker, duration_se
  ARRAY['identity','self-advocacy','communication','rights'],
  TRUE, FALSE, TRUE, FALSE, 70);
 
--- Fix duplicate vimeo_ids for seed data (use unique demo IDs)
-UPDATE videos SET vimeo_id = '76979872' WHERE title = 'Understanding Your Autistic Identity';
-UPDATE videos SET vimeo_id = '209078729' WHERE title = 'Self-Advocacy: Speaking Up for Yourself';
 
 -- ============================================================
 -- TOPICS

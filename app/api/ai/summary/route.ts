@@ -62,30 +62,13 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = createClient()
 
-    // Try to get real transcript from DB
-    const { data: transcript } = await supabase
-      .from('video_transcripts')
-      .select('full_text')
-      .eq('video_id', videoId)
-      .single()
-
-    // Get video category for fallback mock
     const { data: video } = await supabase
       .from('videos')
       .select('category')
       .eq('id', videoId)
       .single()
 
-    const t = transcript as { full_text: string } | null
     const v = video as { category: string } | null
-    if (t?.full_text) {
-      // When real AI is integrated, replace this with:
-      //   const summary = await callAnthropicSummary(t.full_text)
-      //   return NextResponse.json(summary)
-      const category = v?.category ?? 'Housing'
-      return NextResponse.json(MOCK_SUMMARIES[category] ?? MOCK_SUMMARIES['Housing'])
-    }
-
     const category = v?.category ?? 'Housing'
     return NextResponse.json(MOCK_SUMMARIES[category] ?? MOCK_SUMMARIES['Housing'])
   } catch {

@@ -15,7 +15,7 @@ This project was a collaborative effort focused on building an accessible learni
 - **Frontend**: Next.js 14 (App Router) + TypeScript
 - **Styling**: Tailwind CSS (autism-friendly light blue/green palette)
 - **Backend**: Supabase (Auth + Postgres + Row Level Security)
-- **Video**: Vimeo embeds (never YouTube)
+- **Video**: YouTube links (thumbnail browsing, opens YouTube in new tab)
 - **AI**: Placeholder routes ready for Anthropic SDK integration
 
 ## Getting started
@@ -64,6 +64,8 @@ Open [http://localhost:3000](http://localhost:3000).
 1. Add `STRIPE_SECRET_KEY` and `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` to `.env.local`
 2. Replace the `handleUpgrade()` function in `app/(dashboard)/subscription/page.tsx` with a Stripe Checkout session
 3. Add a webhook handler at `app/api/subscriptions/route.ts` to update subscription status on payment events
+
+Until Stripe is connected, the "Upgrade to Premium" button activates premium directly in the database (dev mode). Set `NEXT_PUBLIC_MOCK_SUBSCRIPTION=true` in `.env.local` to give all users premium access without clicking through.
 
 ## Adding real AI (Anthropic)
 

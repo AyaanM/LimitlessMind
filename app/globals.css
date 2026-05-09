@@ -2,58 +2,62 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── Design tokens ─────────────────────────────────────────── */
+/* ─── Design tokens (RGB triplets for Tailwind opacity support) ── */
 :root {
-  --color-background:   #EFF7FB;
-  --color-card:         #FFFFFF;
-  --color-surface:      #E6F3ED;
-  --color-border:       #C4DDE9;
-  --color-foreground:   #1B3A4B;
-  --color-muted:        #4E7A8A;
-  --color-accent:       #3D8FB5;
-  --color-accent-hover: #2E7EA3;
-  --color-accent-light: #D6EDF7;
-  --color-sage:         #4FA87A;
-  --color-sage-light:   #D5EFDF;
-  --color-premium:      #7B6B52;
-  --color-premium-light:#F0EAE0;
+  --color-background:    239 247 251;   /* #EFF7FB */
+  --color-card:          255 255 255;   /* #FFFFFF */
+  --color-surface:       230 243 237;   /* #E6F3ED */
+  --color-border:        196 221 233;   /* #C4DDE9 */
+  --color-foreground:    27 58 75;      /* #1B3A4B */
+  --color-muted:         78 122 138;    /* #4E7A8A */
+  --color-accent:        61 143 181;    /* #3D8FB5 */
+  --color-accent-hover:  46 126 163;    /* #2E7EA3 */
+  --color-accent-light:  214 237 247;   /* #D6EDF7 */
+  --color-sage:          79 168 122;    /* #4FA87A */
+  --color-sage-hover:    62 148 105;    /* #3E9469 */
+  --color-sage-light:    213 239 223;   /* #D5EFDF */
+  --color-premium:       123 107 82;    /* #7B6B52 */
+  --color-premium-light: 240 234 224;   /* #F0EAE0 */
+  --color-destructive:   176 112 112;   /* #B07070 */
 }
 
 /* ─── Dark mode tokens ───────────────────────────────────────── */
 .dark {
-  --color-background:   #0F2030;
-  --color-card:         #172B3A;
-  --color-surface:      #1D3547;
-  --color-border:       #2A4A5E;
-  --color-foreground:   #E8F4FB;
-  --color-muted:        #7AAFC5;
-  --color-accent:       #5BAAD6;
-  --color-accent-hover: #4A99C5;
-  --color-accent-light: #1A3B50;
-  --color-sage:         #6BBE94;
-  --color-sage-light:   #1A3D2E;
-  --color-premium:      #C4A882;
-  --color-premium-light:#2E2418;
+  --color-background:    15 32 48;      /* #0F2030 */
+  --color-card:          23 43 58;      /* #172B3A */
+  --color-surface:       29 53 71;      /* #1D3547 */
+  --color-border:        42 74 94;      /* #2A4A5E */
+  --color-foreground:    232 244 251;   /* #E8F4FB */
+  --color-muted:         122 175 197;   /* #7AAFC5 */
+  --color-accent:        91 170 214;    /* #5BAAD6 */
+  --color-accent-hover:  74 153 197;    /* #4A99C5 */
+  --color-accent-light:  26 59 80;      /* #1A3B50 */
+  --color-sage:          107 190 148;   /* #6BBE94 */
+  --color-sage-hover:    90 175 131;    /* #5AAF83 */
+  --color-sage-light:    26 61 46;      /* #1A3D2E */
+  --color-premium:       196 168 130;   /* #C4A882 */
+  --color-premium-light: 46 36 24;      /* #2E2418 */
+  --color-destructive:   196 127 127;   /* #C47F7F */
 }
 
 /* ─── High contrast override ─────────────────────────────────── */
 .high-contrast {
-  --color-foreground:   #000000;
-  --color-background:   #FFFFFF;
-  --color-card:         #FFFFFF;
-  --color-border:       #000000;
-  --color-muted:        #333333;
-  --color-accent:       #0055AA;
-  --color-sage:         #007744;
+  --color-foreground:    0 0 0;         /* #000000 */
+  --color-background:    255 255 255;   /* #FFFFFF */
+  --color-card:          255 255 255;   /* #FFFFFF */
+  --color-border:        0 0 0;         /* #000000 */
+  --color-muted:         51 51 51;      /* #333333 */
+  --color-accent:        0 85 170;      /* #0055AA */
+  --color-sage:          0 119 68;      /* #007744 */
 }
 .dark.high-contrast {
-  --color-foreground:   #FFFFFF;
-  --color-background:   #000000;
-  --color-card:         #111111;
-  --color-border:       #FFFFFF;
-  --color-muted:        #CCCCCC;
-  --color-accent:       #66BBFF;
-  --color-sage:         #66FFAA;
+  --color-foreground:    255 255 255;   /* #FFFFFF */
+  --color-background:    0 0 0;         /* #000000 */
+  --color-card:          17 17 17;      /* #111111 */
+  --color-border:        255 255 255;   /* #FFFFFF */
+  --color-muted:         204 204 204;   /* #CCCCCC */
+  --color-accent:        102 187 255;   /* #66BBFF */
+  --color-sage:          102 255 170;   /* #66FFAA */
 }
 
 /* ─── Base styles ────────────────────────────────────────────── */
@@ -70,8 +74,8 @@
   }
 
   body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
+    background-color: rgb(var(--color-background));
+    color: rgb(var(--color-foreground));
     font-family: var(--font-inter), system-ui, sans-serif;
     line-height: 1.6;
     min-height: 100dvh;
@@ -92,7 +96,7 @@
 
   /* Focus visible styles */
   :focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid rgb(var(--color-accent));
     outline-offset: 2px;
   }
 
@@ -102,32 +106,32 @@
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: var(--color-surface);
+    background: rgb(var(--color-surface));
   }
   ::-webkit-scrollbar-thumb {
-    background: var(--color-border);
+    background: rgb(var(--color-border));
     border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-muted);
+    background: rgb(var(--color-muted));
   }
 
   /* Form elements */
   input, textarea, select {
-    background-color: var(--color-card);
-    color: var(--color-foreground);
-    border-color: var(--color-border);
+    background-color: rgb(var(--color-card));
+    color: rgb(var(--color-foreground));
+    border-color: rgb(var(--color-border));
   }
   input::placeholder,
   textarea::placeholder {
-    color: var(--color-muted);
+    color: rgb(var(--color-muted));
     opacity: 0.7;
   }
 
   /* Selection */
   ::selection {
-    background: var(--color-accent-light);
-    color: var(--color-foreground);
+    background: rgb(var(--color-accent-light));
+    color: rgb(var(--color-foreground));
   }
 }
 
@@ -135,7 +139,7 @@
 @layer utilities {
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: var(--color-border) transparent;
+    scrollbar-color: rgb(var(--color-border)) transparent;
   }
 
   .no-scrollbar::-webkit-scrollbar {

@@ -36,18 +36,18 @@ export default function ProfileSetupPage() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { router.push('/sign-in'); return }
 
-    const { error: upsertError } = await (supabase.from('profiles') as any)
-      .upsert({
-        id: user.id,
+    const { error: saveError } = await (supabase.from('profiles') as any)
+      .update({
         email: user.email,
         display_name: name.trim(),
         role,
         avatar_id: avatarId,
         font_size: 'normal',
-        is_employee: false,
       })
+      .eq('id', user.id)
 
-    if (upsertError) {
+    if (saveError) {
+      console.error('Profile save failed:', saveError)
       setError('Something went wrong saving your profile. Please try again.')
       setSaving(false)
       return

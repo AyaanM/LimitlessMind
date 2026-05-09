@@ -22,9 +22,12 @@ export function formatDate(dateString: string): string {
   })
 }
 
-export function getVimeoThumbnail(vimeoId: string, size: 'small' | 'medium' | 'large' = 'medium'): string {
-  const sizeMap = { small: '295x166', medium: '640x360', large: '1280x720' }
-  return `https://vumbnail.com/${vimeoId}_${sizeMap[size]}.jpg`
+export function getYouTubeThumbnail(youtubeId: string): string {
+  return `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`
+}
+
+export function getYouTubeUrl(youtubeId: string): string {
+  return `https://www.youtube.com/watch?v=${youtubeId}`
 }
 
 export function getProgressPercent(progressSeconds: number, durationSeconds: number | null): number {

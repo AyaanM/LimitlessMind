@@ -91,7 +91,7 @@ export default function LandingPage() {
                     Welcome video coming soon
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Autism Edmonton staff will record an introduction. Add your Vimeo ID in the employee dashboard.
+                    Autism Edmonton staff will record an introduction. Add the YouTube ID in the employee dashboard.
                   </p>
                 </div>
               </div>
@@ -135,7 +135,7 @@ export default function LandingPage() {
                 </div>
                 <p className="mb-1 text-2xl font-bold text-foreground">Free forever</p>
                 <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
-                  {['All free videos', 'Basic games', 'Video transcripts', 'Progress tracking', 'Save videos'].map((f) => (
+                  {['All free videos', 'Basic games', 'Progress tracking', 'Save videos'].map((f) => (
                     <li key={f} className="flex items-center gap-2">
                       <span className="text-sage font-bold" aria-hidden="true">✓</span> {f}
                     </li>

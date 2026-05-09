@@ -21,7 +21,7 @@ interface Props {
 type ActiveTab = 'videos' | 'contacts' | 'progress' | 'speakers' | 'collections' | 'playlists' | 'resources' | 'moderation'
 
 const EMPTY_VIDEO = {
-  vimeo_id: '',
+  youtube_id: '',
   title: '',
   description: '',
   category: 'Housing' as VideoCategory,
@@ -84,7 +84,7 @@ export function EmployeeDashboardClient({
 
   function openEditVideo(video: Video) {
     setVideoForm({
-      vimeo_id: video.vimeo_id,
+      youtube_id: video.youtube_id,
       title: video.title,
       description: video.description ?? '',
       category: video.category,
@@ -104,8 +104,8 @@ export function EmployeeDashboardClient({
 
   async function saveVideo() {
     setError('')
-    if (!videoForm.vimeo_id.trim() || !videoForm.title.trim()) {
-      setError('Vimeo ID and title are required.')
+    if (!videoForm.youtube_id.trim() || !videoForm.title.trim()) {
+      setError('YouTube ID and title are required.')
       return
     }
     setSavingVideo(true)
@@ -286,8 +286,8 @@ export function EmployeeDashboardClient({
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <label htmlFor="vimeo-id" className="block text-sm font-medium text-foreground">Vimeo ID *</label>
-                  <input id="vimeo-id" type="text" value={videoForm.vimeo_id} onChange={(e) => setVideoForm((f) => ({ ...f, vimeo_id: e.target.value }))} placeholder="e.g. 76979871" className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
+                  <label htmlFor="youtube-id" className="block text-sm font-medium text-foreground">YouTube ID *</label>
+                  <input id="youtube-id" type="text" value={videoForm.youtube_id} onChange={(e) => setVideoForm((f) => ({ ...f, youtube_id: e.target.value }))} placeholder="e.g. dQw4w9WgXcQ" className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent" />
                 </div>
                 <div className="space-y-1.5">
                   <label htmlFor="v-title" className="block text-sm font-medium text-foreground">Title *</label>
@@ -354,7 +354,7 @@ export function EmployeeDashboardClient({
                 <tr className="border-b border-border bg-surface text-left">
                   <th className="px-4 py-3 font-medium text-foreground">Title</th>
                   <th className="px-4 py-3 font-medium text-foreground">Category</th>
-                  <th className="px-4 py-3 font-medium text-foreground">Vimeo ID</th>
+                  <th className="px-4 py-3 font-medium text-foreground">YouTube ID</th>
                   <th className="px-4 py-3 font-medium text-foreground">Plan</th>
                   <th className="px-4 py-3 font-medium text-foreground">Actions</th>
                 </tr>
@@ -368,7 +368,7 @@ export function EmployeeDashboardClient({
                       {video.certificate_eligible && <span className="text-xs text-sage">🏅 Certificate</span>}
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">{video.category}</td>
-                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{video.vimeo_id}</td>
+                    <td className="px-4 py-3 font-mono text-xs text-muted-foreground">{video.youtube_id}</td>
                     <td className="px-4 py-3">
                       <span className={`rounded px-2 py-0.5 text-xs font-medium ${video.is_premium ? 'bg-premium-light text-premium' : 'bg-sage-light text-sage'}`}>
                         {video.is_premium ? 'Premium' : 'Free'}

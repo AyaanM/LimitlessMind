@@ -85,7 +85,7 @@ CREATE POLICY "Employees read all subscriptions"
 -- ============================================================
 CREATE TABLE IF NOT EXISTS videos (
   id                       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  vimeo_id                 TEXT NOT NULL UNIQUE,
+  youtube_id               TEXT NOT NULL UNIQUE,
   title                    TEXT NOT NULL,
   description              TEXT,
   category                 TEXT NOT NULL

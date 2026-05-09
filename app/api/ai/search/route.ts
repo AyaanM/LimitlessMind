@@ -52,33 +52,8 @@ export async function GET(request: NextRequest) {
 
     if (error) throw error
 
-    // Also search transcript segments
-    const { data: segments } = await supabase
-      .from('video_transcript_segments')
-      .select('video_id, text')
-      .ilike('text', `%${query}%`)
-      .limit(10)
+    const allVideos: Video[] = (videos ?? []) as Video[]
 
-    const segs = (segments ?? []) as { video_id: string; text: string }[]
-    const transcriptVideoIds = new Set(segs.map((s) => s.video_id))
-
-    // Merge transcript matches
-    const transcriptVideoIdList = Array.from(transcriptVideoIds).filter(
-      (id) => !(videos as Video[] | null)?.find((v) => v.id === id)
-    )
-
-    let transcriptVideos: Video[] = []
-    if (transcriptVideoIdList.length > 0) {
-      const { data } = await supabase
-        .from('videos')
-        .select('*')
-        .in('id', transcriptVideoIdList)
-      transcriptVideos = (data ?? []) as Video[]
-    }
-
-    const allVideos: Video[] = [...((videos ?? []) as Video[]), ...transcriptVideos]
-
-    // Score results
     const results: SearchResult[] = allVideos
       .map((video) => {
         const q = query.toLowerCase()
@@ -87,7 +62,6 @@ export async function GET(request: NextRequest) {
         if (video.category.toLowerCase().includes(q)) score += 2
         if (video.description?.toLowerCase().includes(q)) score += 1
         if (video.tags.some((t) => t.toLowerCase().includes(q))) score += 1
-        if (transcriptVideoIds.has(video.id)) score += 2
         return {
           video,
           reason: buildReason(video, query),

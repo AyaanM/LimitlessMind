@@ -93,7 +93,7 @@ export interface Database {
       videos: {
         Row: {
           id: string
-          vimeo_id: string
+          youtube_id: string
           title: string
           description: string | null
           category: VideoCategory
@@ -115,7 +115,7 @@ export interface Database {
         }
         Insert: {
           id?: string
-          vimeo_id: string
+          youtube_id: string
           title: string
           description?: string | null
           category: VideoCategory
@@ -136,7 +136,7 @@ export interface Database {
           updated_at?: string
         }
         Update: {
-          vimeo_id?: string
+          youtube_id?: string
           title?: string
           description?: string | null
           category?: VideoCategory
