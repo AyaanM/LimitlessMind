@@ -11,6 +11,9 @@ import {
   User,
   Phone,
   LayoutDashboard,
+  MessageSquare,
+  Building2,
+  GraduationCap,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { AccessibilityPanel } from './AccessibilityPanel'
@@ -21,13 +24,16 @@ interface SidebarProps {
 }
 
 const navItems = [
-  { href: '/home',         label: 'Home',         icon: Home },
-  { href: '/library',      label: 'Library',       icon: BookOpen },
-  { href: '/games',        label: 'Games',         icon: Gamepad2 },
-  { href: '/progress',     label: 'Progress',      icon: BarChart3 },
-  { href: '/subscription', label: 'Subscription',  icon: CreditCard },
-  { href: '/profile',      label: 'Profile',       icon: User },
-  { href: '/contact',      label: 'Contact',       icon: Phone },
+  { href: '/home',             label: 'Home',             icon: Home },
+  { href: '/library',          label: 'Library',           icon: BookOpen },
+  { href: '/games',            label: 'Games',             icon: Gamepad2 },
+  { href: '/community',        label: 'Community',         icon: MessageSquare },
+  { href: '/resources',        label: 'Resources',         icon: Building2 },
+  { href: '/learning-records', label: 'Learning Records',  icon: GraduationCap },
+  { href: '/progress',         label: 'Progress',          icon: BarChart3 },
+  { href: '/subscription',     label: 'Subscription',      icon: CreditCard },
+  { href: '/profile',          label: 'Profile',           icon: User },
+  { href: '/contact',          label: 'Contact',           icon: Phone },
 ]
 
 export function Sidebar({ profile }: SidebarProps) {

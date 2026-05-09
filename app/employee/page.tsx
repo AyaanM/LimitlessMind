@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { EmployeeDashboardClient } from './EmployeeDashboardClient'
-import type { Video, ContactCard } from '@/types/database'
+import type { Video, ContactCard, Speaker, Collection, Playlist, ExternalOrganization } from '@/types/database'
 
 export default async function EmployeeDashboardPage() {
   const supabase = createClient()
@@ -14,14 +14,30 @@ export default async function EmployeeDashboardPage() {
   const profile = await getProfile(supabase, user.id)
   if (!profile?.is_employee) redirect('/home')
 
-  const [{ data: rawVideos }, { data: rawContacts }, { data: allProgress }] = await Promise.all([
+  const [
+    { data: rawVideos },
+    { data: rawContacts },
+    { data: allProgress },
+    { data: rawSpeakers },
+    { data: rawCollections },
+    { data: rawPlaylists },
+    { data: rawOrgs },
+  ] = await Promise.all([
     supabase.from('videos').select('*').order('created_at', { ascending: false }),
     supabase.from('contact_cards').select('*').order('display_order'),
     supabase.from('watch_progress').select('video_id, completed, user_id'),
+    (supabase as any).from('speakers').select('*').order('name'),
+    (supabase as any).from('collections').select('*').order('title'),
+    (supabase as any).from('playlists').select('*').order('title'),
+    (supabase as any).from('external_organizations').select('*').order('name'),
   ])
 
   const videos = (rawVideos ?? []) as Video[]
   const contacts = (rawContacts ?? []) as ContactCard[]
+  const speakers = (rawSpeakers ?? []) as Speaker[]
+  const collections = (rawCollections ?? []) as Collection[]
+  const playlists = (rawPlaylists ?? []) as Playlist[]
+  const orgs = (rawOrgs ?? []) as ExternalOrganization[]
 
   const progressSummary: Record<string, { started: number; completed: number }> = {}
   for (const p of allProgress ?? []) {
@@ -40,6 +56,10 @@ export default async function EmployeeDashboardPage() {
             initialVideos={videos}
             initialContacts={contacts}
             progressSummary={progressSummary}
+            initialSpeakers={speakers}
+            initialCollections={collections}
+            initialPlaylists={playlists}
+            initialOrgs={orgs}
           />
         </div>
       </main>
