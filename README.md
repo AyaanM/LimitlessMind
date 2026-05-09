@@ -2,6 +2,14 @@
 
 A calm, accessible Netflix-style learning management system for the autism community. Built for autistic adults, caregivers, professionals, educators, and employers.
 
+## Contributors
+
+This project was created by our natHacks 2026 team.
+
+- Aidan and AyaanM worked together on the core codebase, including the HTML pages, web app structure, SQL database design, Java app component, frontend styling, and LMS feature implementation.
+- Other team members contributed to research, planning, design feedback, testing, and presentation preparation.
+
+This project was a collaborative effort focused on building an accessible learning platform for Autism Edmonton.
 ## Tech stack
 
 - **Frontend**: Next.js 14 (App Router) + TypeScript
