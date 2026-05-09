@@ -2,6 +2,14 @@
 
 A calm, accessible Netflix-style learning management system for the autism community. Built for autistic adults, caregivers, professionals, educators, and employers.
 
+## Contributors
+
+This project was created by our natHacks 2026 team.
+
+- Aidan and AyaanM worked together on the core codebase, including the HTML pages, web app structure, SQL database design, Java app component, frontend styling, and LMS feature implementation.
+- Other team members contributed to research, planning, design feedback, testing, and presentation preparation.
+
+This project was a collaborative effort focused on building an accessible learning platform for Autism Edmonton.
 ## Tech stack
 
 - **Frontend**: Next.js 14 (App Router) + TypeScript
@@ -81,3 +89,13 @@ All colors are CSS custom properties defined in `app/globals.css` and mapped in 
 | `accent` | `#3D8FB5` (calm blue) | `#5BAAD6` |
 | `sage` | `#4FA87A` (soft green) | `#6BBE94` |
 | `card` | `#FFFFFF` | `#172B3A` |
+
+## Intellectual Property and Usage Rights
+
+This project was created as part of natIgnite 2026 in collaboration with Autism Edmonton as the problem provider.
+
+Under the natIgnite 2026 Problem Provider Agreement, the project contributors retain ownership of the innovations they created during the event. Autism Edmonton, as the problem provider, has been granted a non-exclusive, worldwide, royalty-free, perpetual, and irrevocable license to use, modify, reproduce, distribute, display, create derivative works from, and commercialize the project outputs, including use in learning platforms, training materials, video content, and subscription-based services.
+
+The project contributors may also continue to use, build upon, and commercialize their work independently, subject to the terms of the agreement.
+
+This repository is provided for project demonstration, documentation, and development purposes.
