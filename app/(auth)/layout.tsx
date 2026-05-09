@@ -1,17 +1,15 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-dvh flex-col bg-background">
-      <header className="border-b border-border bg-card/80 px-6 py-4">
+      <header className="border-b border-border bg-card/80 px-6 py-6">
         <Link
           href="/"
           className="flex items-center gap-2 w-fit focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-lg"
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent">
-            <span className="text-sm font-bold text-white">AE</span>
-          </div>
-          <span className="font-semibold text-foreground">Autism Edmonton LMS</span>
+          <Image src="/img/logo.png" alt="Autism Edmonton" width={180} height={60} className="h-16 w-auto" />
         </Link>
       </header>
 

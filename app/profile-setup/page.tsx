@@ -7,6 +7,7 @@ import { RoleSelector } from '@/components/auth/RoleSelector'
 import { AvatarBuilder } from '@/components/auth/AvatarBuilder'
 import type { UserRole } from '@/types/database'
 import type { AvatarId } from '@/lib/constants'
+import Image from 'next/image'
 
 const STEPS = ['Your role', 'Your name', 'Your avatar']
 
@@ -64,9 +65,7 @@ export default function ProfileSetupPage() {
         {/* Header */}
         <div className="mb-8 text-center space-y-2">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent">
-              <span className="text-sm font-bold text-white">AE</span>
-            </div>
+            <Image src="/img/logo.png" alt="Autism Edmonton" width={180} height={60} className="h-16 w-auto" />
           </div>
           <h1 className="text-2xl font-bold text-foreground">Set up your profile</h1>
           <p className="text-sm text-muted-foreground">

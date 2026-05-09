@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { BookOpen, Gamepad2, Sparkles, Users, Home, Briefcase, Heart, UserCheck, Star } from 'lucide-react'
 
 const CATEGORIES = [
@@ -21,13 +22,10 @@ export default function LandingPage() {
   return (
     <div className="min-h-dvh bg-background">
       {/* Header */}
-      <header className="border-b border-border bg-card/80 backdrop-blur-sm">
-        <div className="mx-auto flex h-16 max-w-content items-center justify-between px-4 sm:px-6">
+      <header className="border-b border-border bg-card/80 backdrop-blur-sm px-6 py-6">
+        <div className="mx-auto flex max-w-content items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent">
-              <span className="text-sm font-bold text-white">AE</span>
-            </div>
-            <span className="font-semibold text-foreground">Autism Edmonton LMS</span>
+            <Image src="/img/logo.png" alt="Autism Edmonton" width={180} height={60} className="h-16 w-auto" />
           </div>
           <nav className="flex items-center gap-2">
             <Link

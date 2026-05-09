@@ -13,7 +13,6 @@ export default function SignUpPage() {
   const [showPw, setShowPw] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [sent, setSent] = useState(false)
   const router = useRouter()
 
   async function handleSubmit(e: React.FormEvent) {
@@ -31,11 +30,7 @@ export default function SignUpPage() {
 
     setLoading(true)
     const supabase = createClient()
-    const { error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { emailRedirectTo: `${window.location.origin}/profile-setup` },
-    })
+    const { error: signUpError } = await supabase.auth.signUp({ email, password })
 
     if (signUpError) {
       setError(signUpError.message)
@@ -43,21 +38,7 @@ export default function SignUpPage() {
       return
     }
 
-    setSent(true)
-    setLoading(false)
     router.push('/profile-setup')
-  }
-
-  if (sent) {
-    return (
-      <div className="rounded-2xl border border-border bg-card p-8 shadow-card text-center space-y-4">
-        <div className="text-4xl" aria-hidden="true">📬</div>
-        <h1 className="text-xl font-semibold text-foreground">Check your email</h1>
-        <p className="text-sm text-muted-foreground">
-          We sent a confirmation link to <strong>{email}</strong>. Click it to finish creating your account.
-        </p>
-      </div>
-    )
   }
 
   return (
