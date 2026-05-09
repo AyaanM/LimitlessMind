@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Design tokens ─────────────────────────────────────────── */
+:root {
+  --color-background:   #EFF7FB;
+  --color-card:         #FFFFFF;
+  --color-surface:      #E6F3ED;
+  --color-border:       #C4DDE9;
+  --color-foreground:   #1B3A4B;
+  --color-muted:        #4E7A8A;
+  --color-accent:       #3D8FB5;
+  --color-accent-hover: #2E7EA3;
+  --color-accent-light: #D6EDF7;
+  --color-sage:         #4FA87A;
+  --color-sage-light:   #D5EFDF;
+  --color-premium:      #7B6B52;
+  --color-premium-light:#F0EAE0;
+}
+
+/* ─── Dark mode tokens ───────────────────────────────────────── */
+.dark {
+  --color-background:   #0F2030;
+  --color-card:         #172B3A;
+  --color-surface:      #1D3547;
+  --color-border:       #2A4A5E;
+  --color-foreground:   #E8F4FB;
+  --color-muted:        #7AAFC5;
+  --color-accent:       #5BAAD6;
+  --color-accent-hover: #4A99C5;
+  --color-accent-light: #1A3B50;
+  --color-sage:         #6BBE94;
+  --color-sage-light:   #1A3D2E;
+  --color-premium:      #C4A882;
+  --color-premium-light:#2E2418;
+}
+
+/* ─── High contrast override ─────────────────────────────────── */
+.high-contrast {
+  --color-foreground:   #000000;
+  --color-background:   #FFFFFF;
+  --color-card:         #FFFFFF;
+  --color-border:       #000000;
+  --color-muted:        #333333;
+  --color-accent:       #0055AA;
+  --color-sage:         #007744;
+}
+.dark.high-contrast {
+  --color-foreground:   #FFFFFF;
+  --color-background:   #000000;
+  --color-card:         #111111;
+  --color-border:       #FFFFFF;
+  --color-muted:        #CCCCCC;
+  --color-accent:       #66BBFF;
+  --color-sage:         #66FFAA;
+}
+
+/* ─── Base styles ────────────────────────────────────────────── */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-inter), system-ui, sans-serif;
+    line-height: 1.6;
+    min-height: 100dvh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Focus visible styles */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-surface);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-muted);
+  }
+
+  /* Form elements */
+  input, textarea, select {
+    background-color: var(--color-card);
+    color: var(--color-foreground);
+    border-color: var(--color-border);
+  }
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-muted);
+    opacity: 0.7;
+  }
+
+  /* Selection */
+  ::selection {
+    background: var(--color-accent-light);
+    color: var(--color-foreground);
+  }
+}
+
+/* ─── Utility classes ────────────────────────────────────────── */
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
