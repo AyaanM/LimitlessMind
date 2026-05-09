@@ -71,7 +71,7 @@ export default function GamesPage() {
       <section className="space-y-4" aria-label="Free games">
         <h2 className="text-lg font-semibold text-foreground">Free games</h2>
         {freeGames.length > 0 ? (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {freeGames.map((game) => (
               <GameCard
                 key={game.id}
@@ -96,7 +96,7 @@ export default function GamesPage() {
             message="Premium games include job interview practice, daily routine building, and communication scenarios — all calm and accessible."
           />
         ) : premiumGames.length > 0 ? (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {premiumGames.map((game) => (
               <GameCard
                 key={game.id}

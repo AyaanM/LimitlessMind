@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS videos (
   title                    TEXT NOT NULL,
   description              TEXT,
   category                 TEXT NOT NULL
-                           CHECK (category IN ('Housing','Employment','Mental Health','Relationships','Identity')),
+                           CHECK (category IN ('Housing','Employment','Mental Health','Relationships','Identity','KIDS')),
   speaker                  TEXT,
   thumbnail_url            TEXT,
   duration_seconds         INTEGER,
