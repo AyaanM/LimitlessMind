@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { Bookmark, BookmarkCheck, CheckCircle, ChevronLeft, Clock, Phone } from 'lucide-react'
+import { Bookmark, BookmarkCheck, CheckCircle, ChevronLeft, Clock, Phone, Award } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { VimeoPlayer } from '@/components/video/VimeoPlayer'
 import { VideoCard } from '@/components/video/VideoCard'
@@ -11,9 +11,11 @@ import { AIChatBox } from '@/components/ai/AIChatBox'
 import { PremiumGate } from '@/components/shared/PremiumGate'
 import { PageLoader } from '@/components/shared/LoadingSpinner'
 import { SubscriptionBadge } from '@/components/shared/SubscriptionBadge'
+import { SpeakerCard } from '@/components/shared/SpeakerCard'
+import { DiscussionSection } from '@/components/shared/DiscussionSection'
 import { CATEGORY_COLORS, CATEGORY_ICONS } from '@/lib/constants'
 import { formatDuration, cn } from '@/lib/utils'
-import type { Video, VideoActivity, VideoTranscriptSegment } from '@/types/database'
+import type { Video, VideoActivity, VideoTranscriptSegment, Speaker } from '@/types/database'
 import Link from 'next/link'
 
 export default function VideoPage() {
@@ -23,11 +25,13 @@ export default function VideoPage() {
   const [related, setRelated] = useState<Video[]>([])
   const [activities, setActivities] = useState<VideoActivity[]>([])
   const [segments, setSegments] = useState<VideoTranscriptSegment[]>([])
+  const [speakers, setSpeakers] = useState<Speaker[]>([])
   const [isSaved, setIsSaved] = useState(false)
   const [isCompleted, setIsCompleted] = useState(false)
   const [progressSeconds, setProgressSeconds] = useState(0)
   const [isPremium, setIsPremium] = useState(false)
   const [userId, setUserId] = useState<string | null>(null)
+  const [userDisplayName, setUserDisplayName] = useState<string>('Community member')
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'transcript' | 'activities'>('transcript')
 
@@ -45,6 +49,8 @@ export default function VideoPage() {
         { data: progress },
         { data: acts },
         { data: segs },
+        { data: profile },
+        { data: vsRows },
       ] = await Promise.all([
         supabase.from('videos').select('*').eq('id', id).single(),
         supabase.from('subscriptions').select('*').eq('user_id', user.id).single(),
@@ -52,6 +58,8 @@ export default function VideoPage() {
         supabase.from('watch_progress').select('*').eq('user_id', user.id).eq('video_id', id).maybeSingle(),
         supabase.from('video_activities').select('*').eq('video_id', id),
         supabase.from('video_transcript_segments').select('*').eq('video_id', id).order('start_time'),
+        supabase.from('profiles').select('display_name').eq('id', user.id).single(),
+        (supabase as any).from('video_speakers').select('speaker_id').eq('video_id', id),
       ])
 
       const vidData = vid as Video | null
@@ -67,15 +75,40 @@ export default function VideoPage() {
       setProgressSeconds(progressData?.progress_seconds ?? 0)
       setActivities((acts ?? []) as VideoActivity[])
       setSegments((segs ?? []) as VideoTranscriptSegment[])
+      setUserDisplayName((profile as any)?.display_name ?? 'Community member')
 
-      // Load related videos
-      const { data: relatedVids } = await supabase
-        .from('videos')
-        .select('*')
-        .eq('category', vidData.category)
-        .neq('id', id)
-        .limit(4)
-      setRelated(((relatedVids ?? []) as Video[]).filter((v) => !v.is_premium || premium))
+      // Load structured speaker profiles
+      const speakerIds = ((vsRows ?? []) as { speaker_id: string }[]).map((r) => r.speaker_id)
+      if (speakerIds.length > 0) {
+        const { data: spData } = await (supabase as any)
+          .from('speakers')
+          .select('*')
+          .in('id', speakerIds)
+        setSpeakers((spData ?? []) as Speaker[])
+      }
+
+      // Load related videos — prefer same topic, then same category, excluding current
+      let relatedVids: Video[] = []
+      if (vidData.topic_id) {
+        const { data: topicRelated } = await supabase
+          .from('videos')
+          .select('*')
+          .eq('topic_id', vidData.topic_id)
+          .neq('id', id)
+          .limit(4)
+        relatedVids = (topicRelated ?? []) as Video[]
+      }
+      if (relatedVids.length < 4) {
+        const { data: catRelated } = await supabase
+          .from('videos')
+          .select('*')
+          .eq('category', vidData.category)
+          .neq('id', id)
+          .limit(4 - relatedVids.length)
+        const existing = new Set(relatedVids.map((v) => v.id))
+        relatedVids = [...relatedVids, ...((catRelated ?? []) as Video[]).filter((v) => !existing.has(v.id))]
+      }
+      setRelated(relatedVids.filter((v) => !v.is_premium || premium))
 
       setLoading(false)
     }
@@ -157,14 +190,21 @@ export default function VideoPage() {
           <div className="space-y-4">
             <div className="flex items-start justify-between gap-4">
               <h1 className="text-xl font-bold text-foreground leading-tight">{video.title}</h1>
-              <SubscriptionBadge isPremium={video.is_premium} />
+              <div className="flex items-center gap-2 shrink-0">
+                {video.certificate_eligible && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-sage-light px-2.5 py-1 text-xs font-medium text-sage">
+                    <Award className="h-3.5 w-3.5" aria-hidden="true" /> Certificate
+                  </span>
+                )}
+                <SubscriptionBadge isPremium={video.is_premium} />
+              </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
               <span className={cn('inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-medium', catColor)}>
                 <span aria-hidden="true">{catIcon}</span> {video.category}
               </span>
-              {video.speaker && (
+              {video.speaker && speakers.length === 0 && (
                 <span className="text-sm text-muted-foreground">by {video.speaker}</span>
               )}
               {video.duration_seconds && (
@@ -173,10 +213,26 @@ export default function VideoPage() {
                   {formatDuration(video.duration_seconds)}
                 </span>
               )}
+              {video.estimated_learning_minutes > 0 && (
+                <span className="text-xs text-muted-foreground bg-surface border border-border rounded-full px-2.5 py-1">
+                  {video.estimated_learning_minutes} min learning
+                </span>
+              )}
             </div>
 
             {video.description && (
               <p className="text-sm leading-relaxed text-muted-foreground">{video.description}</p>
+            )}
+
+            {/* Tags */}
+            {video.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {video.tags.map((tag) => (
+                  <span key={tag} className="rounded-full bg-surface border border-border px-2.5 py-0.5 text-xs text-muted-foreground">
+                    {tag}
+                  </span>
+                ))}
+              </div>
             )}
 
             {/* Action buttons */}
@@ -214,6 +270,18 @@ export default function VideoPage() {
               </Link>
             </div>
           </div>
+
+          {/* Speaker cards */}
+          {speakers.length > 0 && (
+            <div className="space-y-3">
+              <h2 className="text-sm font-semibold text-foreground">About the speaker{speakers.length > 1 ? 's' : ''}</h2>
+              <div className="space-y-3">
+                {speakers.map((spk) => (
+                  <SpeakerCard key={spk.id} speaker={spk} compact />
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* AI Summary */}
           <AISummaryBox videoId={video.id} isPremiumUser={isPremium} />
@@ -281,6 +349,15 @@ export default function VideoPage() {
               )}
             </div>
           </div>
+
+          {/* Discussion */}
+          {userId && (
+            <DiscussionSection
+              videoId={id}
+              userId={userId}
+              userDisplayName={userDisplayName}
+            />
+          )}
         </div>
 
         {/* Sidebar */}
@@ -298,7 +375,7 @@ export default function VideoPage() {
           {/* Related videos */}
           {related.length > 0 && (
             <div className="space-y-3">
-              <h2 className="text-sm font-semibold text-foreground">Related videos</h2>
+              <h2 className="text-sm font-semibold text-foreground">Related sessions</h2>
               <div className="space-y-3">
                 {related.map((rv) => (
                   <VideoCard key={rv.id} video={rv} isPremiumUser={isPremium} />
