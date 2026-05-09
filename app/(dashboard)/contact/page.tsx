@@ -75,7 +75,7 @@ export default async function ContactPage() {
           <div className="text-4xl" aria-hidden="true">📋</div>
           <p className="font-semibold text-foreground">Contact information coming soon</p>
           <p className="text-sm text-muted-foreground">
-            Autism Edmonton staff will add contact details through the employee dashboard.
+            Autism Edmonton staff will add contact details soon.
           </p>
         </div>
       )}

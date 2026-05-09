@@ -91,7 +91,7 @@ export default function LandingPage() {
                     Welcome video coming soon
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Autism Edmonton staff will record an introduction. Add the YouTube ID in the employee dashboard.
+                    Autism Edmonton staff will record an introduction. Add the YouTube ID via Supabase Studio.
                   </p>
                 </div>
               </div>

@@ -1,6 +1,6 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
-export type UserRole = 'autistic_adult' | 'caregiver' | 'professional' | 'educator' | 'employer' | 'employee'
+export type UserRole = 'autistic_adult' | 'caregiver' | 'professional' | 'educator' | 'employer'
 export type SubscriptionPlan = 'free' | 'premium'
 export type SubscriptionStatus = 'active' | 'canceled' | 'past_due' | 'trialing'
 export type VideoCategory = 'Housing' | 'Employment' | 'Mental Health' | 'Relationships' | 'Identity'

@@ -44,7 +44,6 @@ export default async function HomePage() {
     professional:   ['Mental Health', 'Identity', 'Employment'],
     educator:       ['Identity', 'Relationships', 'Mental Health'],
     employer:       ['Employment', 'Identity', 'Relationships'],
-    employee:       ['Employment', 'Housing', 'Mental Health'],
   }
   const preferred = roleCategories[profile?.role ?? 'autistic_adult'] ?? []
   const recommended = videos.filter((v) => preferred.includes(v.category)).slice(0, 8)
@@ -95,7 +94,7 @@ export default async function HomePage() {
           <div className="text-4xl" aria-hidden="true">🎬</div>
           <p className="font-semibold text-foreground">Videos coming soon</p>
           <p className="text-sm text-muted-foreground">
-            Autism Edmonton staff will add videos through the employee dashboard.
+            Autism Edmonton staff will add videos soon.
           </p>
         </div>
       )}

@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   display_name  TEXT,
   avatar_id     TEXT DEFAULT 'avatar-1',
   role          TEXT DEFAULT 'autistic_adult' NOT NULL
-                CHECK (role IN ('autistic_adult','caregiver','professional','educator','employer','employee')),
+                CHECK (role IN ('autistic_adult','caregiver','professional','educator','employer')),
   font_size     TEXT DEFAULT 'normal'
                 CHECK (font_size IN ('small','normal','large')),
   bio           TEXT,
@@ -34,13 +34,14 @@ CREATE POLICY "Users insert own profile"
   ON profiles FOR INSERT
   WITH CHECK (auth.uid() = id);
 
+CREATE OR REPLACE FUNCTION public.is_employee()
+RETURNS BOOLEAN LANGUAGE sql SECURITY DEFINER SET search_path = public AS $$
+  SELECT COALESCE((SELECT is_employee FROM profiles WHERE id = auth.uid()), FALSE);
+$$;
+
 CREATE POLICY "Employees read all profiles"
   ON profiles FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM profiles p WHERE p.id = auth.uid() AND p.is_employee = TRUE
-    )
-  );
+  USING (public.is_employee());
 
 -- ============================================================
 -- SUBSCRIPTIONS
@@ -131,53 +132,6 @@ CREATE POLICY "Employees manage all videos"
   WITH CHECK (
     EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND is_employee = TRUE)
   );
-
--- ============================================================
--- VIDEO TRANSCRIPTS
--- ============================================================
-CREATE TABLE IF NOT EXISTS video_transcripts (
-  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  video_id   UUID REFERENCES videos(id) ON DELETE CASCADE NOT NULL UNIQUE,
-  full_text  TEXT NOT NULL,
-  language   TEXT DEFAULT 'en',
-  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
-);
-
-ALTER TABLE video_transcripts ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Authenticated users read transcripts"
-  ON video_transcripts FOR SELECT
-  TO authenticated
-  USING (TRUE);
-
-CREATE POLICY "Employees manage transcripts"
-  ON video_transcripts FOR ALL
-  USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND is_employee = TRUE))
-  WITH CHECK (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND is_employee = TRUE));
-
--- ============================================================
--- VIDEO TRANSCRIPT SEGMENTS
--- ============================================================
-CREATE TABLE IF NOT EXISTS video_transcript_segments (
-  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  video_id      UUID REFERENCES videos(id) ON DELETE CASCADE NOT NULL,
-  start_time    NUMERIC(10,2) NOT NULL,
-  end_time      NUMERIC(10,2) NOT NULL,
-  text          TEXT NOT NULL,
-  created_at    TIMESTAMPTZ DEFAULT NOW() NOT NULL
-);
-
-ALTER TABLE video_transcript_segments ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Authenticated users read segments"
-  ON video_transcript_segments FOR SELECT
-  TO authenticated
-  USING (TRUE);
-
-CREATE POLICY "Employees manage segments"
-  ON video_transcript_segments FOR ALL
-  USING (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND is_employee = TRUE))
-  WITH CHECK (EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND is_employee = TRUE));
 
 -- ============================================================
 -- VIDEO ACTIVITIES

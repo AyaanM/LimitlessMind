@@ -103,7 +103,6 @@ export const ROLE_LABELS: Record<UserRole, string> = {
   professional:   'Professional',
   educator:       'Educator',
   employer:       'Employer',
-  employee:       'Employee (Staff)',
 }
 
 export const AVATAR_IDS = [

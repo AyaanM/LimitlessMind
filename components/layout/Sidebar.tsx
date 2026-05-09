@@ -10,7 +10,6 @@ import {
   CreditCard,
   User,
   Phone,
-  LayoutDashboard,
   MessageSquare,
   Building2,
   GraduationCap,
@@ -67,23 +66,6 @@ export function Sidebar({ profile }: SidebarProps) {
             )
           })}
 
-          {profile?.is_employee && (
-            <li className="pt-2">
-              <Link
-                href="/employee"
-                className={cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent',
-                  pathname === '/employee'
-                    ? 'bg-premium-light text-premium'
-                    : 'text-muted-foreground hover:bg-surface hover:text-foreground'
-                )}
-                aria-current={pathname === '/employee' ? 'page' : undefined}
-              >
-                <LayoutDashboard className="h-5 w-5 shrink-0" aria-hidden="true" />
-                <span>Employee Dashboard</span>
-              </Link>
-            </li>
-          )}
         </ul>
       </nav>
 
