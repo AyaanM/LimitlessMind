@@ -1,58 +1,100 @@
 import { NextRequest, NextResponse } from 'next/server'
+import Anthropic from '@anthropic-ai/sdk'
 
-// Mock responses keyed to common question patterns.
-// Replace body of generateReply() with an Anthropic SDK call when ready:
-//   import Anthropic from '@anthropic-ai/sdk'
-//   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-//   const msg = await client.messages.create({ ... })
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
+function buildSystemPrompt(videoTitle?: string, videoDescription?: string): string {
+  const base = `You are a calm, friendly learning assistant on the Autism Edmonton LMS — a platform for autistic adults, caregivers, educators, and employers. Your tone is warm, clear, and patient. Use short sentences and plain language. Never be dismissive. If you don't know something, say so honestly and suggest contacting Autism Edmonton staff directly.`
+
+  if (videoTitle && videoDescription) {
+    return `${base}
+
+The user is watching a video titled "${videoTitle}". Here is the video description:
+"""
+${videoDescription}
+"""
+
+Answer the user's questions based on this description. If their question goes beyond what the description covers, answer from your general knowledge about autism, but make clear when you're doing so. Keep answers to 2–4 sentences unless more detail is genuinely needed.`
+  }
+
+  if (videoTitle) {
+    return `${base}
+
+The user is watching a video titled "${videoTitle}". Answer questions related to this topic. Keep answers to 2–4 sentences unless more detail is genuinely needed.`
+  }
+
+  return `${base} Keep answers to 2–4 sentences unless more detail is genuinely needed.`
+}
+
+// Keyword fallback used when ANTHROPIC_API_KEY is not set
 const KEYWORD_RESPONSES: [RegExp, string][] = [
   [/housing|apartment|living|rent|supported/i,
-   "Great question about housing! There are several options available for autistic adults — from fully independent living to supported housing where staff are available to help. A Housing Navigator at Autism Edmonton can walk you through what's available in Alberta. Would you like me to explain any specific option?"],
-
+   "There are several housing options for autistic adults — from fully independent living to supported housing with staff available to help. A Housing Navigator at Autism Edmonton can walk you through what's available in Alberta."],
   [/job|interview|work|employment|career|hire|accommodation/i,
-   "Preparing for work is something many people find challenging, and that's completely okay. Some helpful steps: practise answering common interview questions out loud, prepare a short description of your strengths, and know that you can ask for workplace accommodations — things like a quiet workspace, written instructions, or flexible break times. Would you like more detail on any of these?"],
-
+   "Preparing for work can feel challenging, and that's okay. Practise answering common interview questions, prepare a short description of your strengths, and know that you can ask for workplace accommodations like a quiet space or written instructions."],
   [/anxiety|stress|overwhelm|nervous|worry|calm/i,
-   "Feeling anxious or overwhelmed is very common, and there are gentle strategies that can help. Things like box breathing, stepping outside for a moment, having a sensory kit nearby, or using a calm-down app can make a real difference. It also helps to identify your triggers so you can plan ahead. Is there a specific situation you'd like help with?"],
-
+   "Feeling anxious is very common, and there are gentle strategies that help. Box breathing, stepping outside, or using a sensory kit can make a real difference. Identifying your triggers ahead of time also helps you plan."],
   [/friend|relationship|social|conversation|boundary/i,
-   "Building and keeping relationships takes practice for everyone. Clear communication, setting boundaries kindly, and taking breaks when social situations feel like too much are all healthy strategies. It's also okay to connect with people who share your interests — those friendships often feel more natural. What would you like to know more about?"],
-
+   "Clear communication, setting boundaries kindly, and taking breaks when social situations feel like too much are all healthy strategies. Connecting with people who share your interests often makes friendships feel more natural."],
   [/identity|autistic|autism|self|who am i/i,
-   "Understanding your autistic identity is a journey, and it can be really positive. Many autistic people find that learning about neurodiversity helps them understand their own strengths, communication style, and needs. Self-advocacy — knowing what you need and asking for it — is a powerful skill. Would you like resources on this?"],
-
+   "Understanding your autistic identity is a journey, and it can be really positive. Many autistic people find that learning about neurodiversity helps them understand their own strengths and needs. Self-advocacy is a powerful skill."],
   [/mental health|therapist|counsellor|support|help/i,
-   "Mental health support is important and available. You can ask your doctor for a referral to a therapist who works with autistic adults. Autism Edmonton also has staff who can help connect you with the right support. Remember, asking for help is a strength, not a weakness."],
-
+   "Mental health support is important and available. Ask your doctor for a referral to a therapist who works with autistic adults. Autism Edmonton also has staff who can connect you with the right support."],
   [/hello|hi|hey|good morning|good afternoon/i,
-   "Hello! I'm glad you're here. I can help you understand topics from the videos, find resources, or answer questions about housing, employment, mental health, relationships, and identity. What would you like to explore?"],
+   "Hello! I can help you understand topics from this video or answer general questions about housing, employment, mental health, relationships, and identity. What would you like to explore?"],
 ]
 
-function generateReply(message: string, context?: string): string {
+function keywordFallback(message: string, videoTitle?: string, videoDescription?: string): string {
+  // If we have a description, try to answer from it directly
+  if (videoDescription) {
+    const desc = videoDescription.toLowerCase()
+    const q = message.toLowerCase()
+    // Check if any keywords from the question appear in the description
+    const words = q.split(/\s+/).filter((w) => w.length > 4)
+    const matches = words.filter((w) => desc.includes(w))
+    if (matches.length > 0) {
+      return `Based on the video description: ${videoDescription} — Does that answer your question, or would you like more detail?`
+    }
+    return `This video covers: "${videoDescription}". For more specific details, watch the full video or contact Autism Edmonton staff directly.`
+  }
+
   for (const [pattern, reply] of KEYWORD_RESPONSES) {
     if (pattern.test(message)) return reply
   }
 
-  if (context) {
-    return `That's a thoughtful question related to "${context}". While I don't have a specific answer for that, I'd encourage you to explore the full video transcript and related resources. You can also reach out to Autism Edmonton staff directly — they're happy to help.`
-  }
-
-  return "Thank you for your question. I'm here to help with topics covered on this platform — housing, employment, mental health, relationships, and identity. Could you tell me a bit more about what you'd like to know?"
+  return videoTitle
+    ? `That's a good question related to "${videoTitle}". I'd encourage you to explore the video and related resources, or reach out to Autism Edmonton staff — they're happy to help.`
+    : "Thank you for your question. I'm here to help with topics on this platform — housing, employment, mental health, relationships, and identity. Could you tell me a bit more about what you'd like to know?"
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, context } = await request.json() as { message: string; context?: string }
+    const { message, videoTitle, videoDescription } = await request.json() as {
+      message: string
+      videoTitle?: string
+      videoDescription?: string
+    }
 
     if (!message?.trim()) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 })
     }
 
-    // Simulate a short delay (remove when using real AI)
-    await new Promise((r) => setTimeout(r, 600))
+    if (!process.env.ANTHROPIC_API_KEY) {
+      await new Promise((r) => setTimeout(r, 400))
+      const reply = keywordFallback(message.trim(), videoTitle, videoDescription)
+      return NextResponse.json({ reply })
+    }
 
-    const reply = generateReply(message.trim(), context)
+    const systemPrompt = buildSystemPrompt(videoTitle, videoDescription)
+
+    const response = await client.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 300,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: message.trim() }],
+    })
+
+    const reply = (response.content[0] as { type: string; text: string }).text ?? 'I had trouble generating a response. Please try again.'
     return NextResponse.json({ reply })
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

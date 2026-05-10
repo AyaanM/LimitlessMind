@@ -3,6 +3,7 @@ import type { Video } from '@/types/database'
 
 interface VideoRowProps {
   title: string
+  subtitle?: string
   videos: Video[]
   progressMap?: Record<string, number>
   savedIds?: Set<string>
@@ -13,6 +14,7 @@ interface VideoRowProps {
 
 export function VideoRow({
   title,
+  subtitle,
   videos,
   progressMap = {},
   savedIds = new Set(),
@@ -33,8 +35,11 @@ export function VideoRow({
   }
 
   return (
-    <section className="space-y-4" aria-label={title}>
-      <h2 className="text-lg font-semibold text-foreground">{title}</h2>
+    <section className="space-y-3" aria-label={title}>
+      <div>
+        <h2 className="text-lg font-semibold text-foreground">{title}</h2>
+        {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
+      </div>
       <div
         className="flex gap-4 overflow-x-auto pb-2 scrollbar-thin"
         role="list"

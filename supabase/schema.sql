@@ -13,10 +13,17 @@ CREATE TABLE IF NOT EXISTS profiles (
                 CHECK (role IN ('autistic_adult','caregiver','professional','educator','employer')),
   font_size     TEXT DEFAULT 'normal'
                 CHECK (font_size IN ('small','normal','large')),
-  bio           TEXT,
-  is_employee   BOOLEAN DEFAULT FALSE NOT NULL,
-  created_at    TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-  updated_at    TIMESTAMPTZ DEFAULT NOW() NOT NULL
+  bio                    TEXT,
+  is_employee            BOOLEAN DEFAULT FALSE NOT NULL,
+  xp                     INTEGER DEFAULT 0 NOT NULL,
+  level                  INTEGER DEFAULT 1 NOT NULL,
+  streak_days            INTEGER DEFAULT 0 NOT NULL,
+  last_active_date       DATE,
+  badges                 TEXT[] DEFAULT '{}' NOT NULL,
+  total_videos_completed INTEGER DEFAULT 0 NOT NULL,
+  total_games_completed  INTEGER DEFAULT 0 NOT NULL,
+  created_at             TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at             TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
@@ -250,10 +257,11 @@ CREATE TABLE IF NOT EXISTS game_progress (
   id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id    UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
   game_id    UUID REFERENCES games(id) ON DELETE CASCADE NOT NULL,
-  completed  BOOLEAN DEFAULT FALSE NOT NULL,
-  score      INTEGER,
-  played_at  TIMESTAMPTZ DEFAULT NOW() NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  completed    BOOLEAN DEFAULT FALSE NOT NULL,
+  score        INTEGER,
+  play_seconds INTEGER DEFAULT 0 NOT NULL,
+  played_at    TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  created_at   TIMESTAMPTZ DEFAULT NOW() NOT NULL,
   UNIQUE(user_id, game_id)
 );
 

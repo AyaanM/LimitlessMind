@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { getProfile, getSubscription, getVideos, getWatchProgress, getSavedVideos, getGames, getGameProgress, isPremiumActive } from '@/lib/supabase/queries'
+import { getSubscription, getVideos, getWatchProgress, getGameProgress, isPremiumActive } from '@/lib/supabase/queries'
 import { redirect } from 'next/navigation'
 import { ProgressCard } from '@/components/shared/ProgressCard'
 import { VideoCard } from '@/components/video/VideoCard'
@@ -12,11 +12,10 @@ export default async function ProgressPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/sign-in')
 
-  const [subscription, allVideos, watchRows, savedRows, gameProgressRows] = await Promise.all([
+  const [subscription, allVideos, watchRows, gameProgressRows] = await Promise.all([
     getSubscription(supabase, user.id),
     getVideos(supabase),
     getWatchProgress(supabase, user.id),
-    getSavedVideos(supabase, user.id),
     getGameProgress(supabase, user.id),
   ])
 
@@ -30,6 +29,7 @@ export default async function ProgressPage() {
   const completedVideos = watchRows2.filter((w) => w.completed)
   const inProgressVideos = watchRows2.filter((w) => !w.completed && w.progress_seconds > 0)
   const completedGames = gameRows.filter((g) => g.completed)
+  // savedRows removed — Videos Saved stat removed per design update
 
   const recentlyWatched = [...watchRows2]
     .sort((a, b) => new Date(b.last_watched_at).getTime() - new Date(a.last_watched_at).getTime())
@@ -62,7 +62,6 @@ export default async function ProgressPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <ProgressCard label="Videos completed" value={completedVideos.length} icon="✅" color="green" />
         <ProgressCard label="Videos in progress" value={inProgressVideos.length} icon="▶️" color="blue" />
-        <ProgressCard label="Videos saved" value={savedRows.length} icon="🔖" color="blue" />
         <ProgressCard label="Games completed" value={completedGames.length} icon="🎮" color="green" />
       </div>
 

@@ -1,3 +1,4 @@
+import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import Image from 'next/image'
 import { BookOpen, Gamepad2, Sparkles, Users, Home, Briefcase, Heart, UserCheck, Star } from 'lucide-react'
@@ -18,7 +19,12 @@ const ROLES = [
   'Employer',
 ]
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  const isLoggedIn = !!user
+  const introVideoId = process.env.NEXT_PUBLIC_INTRO_VIDEO_ID ?? ''
+
   return (
     <div className="min-h-dvh bg-background">
       {/* Header */}
@@ -29,17 +35,34 @@ export default function LandingPage() {
           </div>
           <nav className="flex items-center gap-2">
             <Link
-              href="/sign-in"
+              href="/about"
               className="rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
-              Sign in
+              About
             </Link>
-            <Link
-              href="/sign-up"
-              className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-            >
-              Get started
-            </Link>
+            {isLoggedIn ? (
+              <Link
+                href="/home"
+                className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              >
+                Go to platform →
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/sign-in"
+                  className="rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  href="/sign-up"
+                  className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                >
+                  Get started
+                </Link>
+              </>
+            )}
           </nav>
         </div>
       </header>
@@ -60,20 +83,29 @@ export default function LandingPage() {
               caregivers, educators, and employers. Browse videos, play games, and learn at your
               own pace — with no pressure, no clutter, and no noise.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            {isLoggedIn ? (
               <Link
-                href="/sign-up"
-                className="w-full sm:w-auto rounded-xl bg-accent px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                href="/home"
+                className="inline-block rounded-xl bg-accent px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               >
-                Create a free account
+                Go to platform →
               </Link>
-              <Link
-                href="/sign-in"
-                className="w-full sm:w-auto rounded-xl border border-border bg-card px-8 py-4 text-base font-medium text-foreground transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-              >
-                Sign in
-              </Link>
-            </div>
+            ) : (
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <Link
+                  href="/sign-up"
+                  className="w-full sm:w-auto rounded-xl bg-accent px-8 py-4 text-base font-semibold text-white transition-colors hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                >
+                  Create a free account
+                </Link>
+                <Link
+                  href="/sign-in"
+                  className="w-full sm:w-auto rounded-xl border border-border bg-card px-8 py-4 text-base font-medium text-foreground transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                >
+                  Sign in
+                </Link>
+              </div>
+            )}
           </div>
         </section>
 
@@ -84,17 +116,27 @@ export default function LandingPage() {
               Welcome to Autism Edmonton LMS
             </h2>
             <div className="overflow-hidden rounded-2xl shadow-card-hover">
-              <div className="aspect-video bg-accent-light flex items-center justify-center">
-                <div className="text-center space-y-3 px-8">
-                  <div className="text-5xl" aria-hidden="true">🎬</div>
-                  <p className="text-base font-medium text-accent">
-                    Welcome video coming soon
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    Autism Edmonton staff will record an introduction. Add the YouTube ID via Supabase Studio.
-                  </p>
+              {introVideoId ? (
+                <div className="aspect-video">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${introVideoId}`}
+                    title="Welcome to Autism Edmonton LMS"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="h-full w-full"
+                  />
                 </div>
-              </div>
+              ) : (
+                <div className="aspect-video bg-accent-light flex items-center justify-center">
+                  <div className="text-center space-y-3 px-8">
+                    <div className="text-5xl" aria-hidden="true">🎬</div>
+                    <p className="text-base font-medium text-accent">Welcome video coming soon</p>
+                    <p className="text-sm text-muted-foreground">
+                      Add <code className="rounded bg-white/60 px-1">NEXT_PUBLIC_INTRO_VIDEO_ID=yourYouTubeID</code> to your <code className="rounded bg-white/60 px-1">.env.local</code> to embed the video.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </section>

@@ -15,7 +15,6 @@ import {
   GraduationCap,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { AccessibilityPanel } from './AccessibilityPanel'
 import type { Profile } from '@/types/database'
 
 interface SidebarProps {
@@ -68,8 +67,6 @@ export function Sidebar({ profile }: SidebarProps) {
 
         </ul>
       </nav>
-
-      <AccessibilityPanel />
     </aside>
   )
 }

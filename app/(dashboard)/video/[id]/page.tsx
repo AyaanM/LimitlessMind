@@ -113,6 +113,11 @@ export default function VideoPage() {
       last_watched_at: new Date().toISOString(),
     }, { onConflict: 'user_id,video_id' })
     setIsCompleted(true)
+    fetch('/api/gamification/award', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'complete_video' }),
+    }).catch(() => {})
   }, [userId, video, isCompleted])
 
   if (loading) return <PageLoader />
@@ -201,7 +206,10 @@ export default function VideoPage() {
             </div>
 
             {video.description && (
-              <p className="text-sm leading-relaxed text-muted-foreground">{video.description}</p>
+              <div className="rounded-xl border border-border bg-surface p-4 space-y-1.5">
+                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">About this video</p>
+                <p className="text-sm leading-relaxed text-foreground">{video.description}</p>
+              </div>
             )}
 
             {video.tags.length > 0 && (
@@ -265,11 +273,19 @@ export default function VideoPage() {
           {speakers.length > 0 && (
             <div className="space-y-3">
               <h2 className="text-sm font-semibold text-foreground">About the speaker{speakers.length > 1 ? 's' : ''}</h2>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {speakers.map((spk) => (
-                  <SpeakerCard key={spk.id} speaker={spk} compact />
+                  <SpeakerCard key={spk.id} speaker={spk} />
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* Fallback: speaker name only, no linked profile */}
+          {speakers.length === 0 && video.speaker && (
+            <div className="rounded-xl border border-border bg-card p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">Speaker</p>
+              <p className="text-sm font-medium text-foreground">{video.speaker}</p>
             </div>
           )}
 
@@ -309,7 +325,7 @@ export default function VideoPage() {
         {/* Sidebar */}
         <div className="space-y-6">
           {isPremium ? (
-            <AIChatBox context={video.title} />
+            <AIChatBox videoTitle={video.title} videoDescription={video.description ?? undefined} />
           ) : (
             <PremiumGate
               title="AI Learning Assistant"

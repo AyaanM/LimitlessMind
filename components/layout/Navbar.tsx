@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LogOut, Menu, X } from 'lucide-react'
+import { LogOut, Menu, Star, X } from 'lucide-react'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -28,6 +28,7 @@ export function Navbar({ profile }: NavbarProps) {
   const avatarSrc = profile?.avatar_id
     ? `/avatars/${profile.avatar_id}.svg`
     : '/avatars/avatar-1.svg'
+  const level = (profile as any)?.level ?? 1
 
   return (
     <>
@@ -41,7 +42,7 @@ export function Navbar({ profile }: NavbarProps) {
       <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur-sm">
         <div className="flex h-16 items-center justify-between px-4 sm:px-6">
           <Link
-            href="/home"
+            href="/"
             className="flex items-center gap-2.5 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
             <img src="/img/logo.png" alt="Autism Edmonton" className="h-10 rounded-lg" />
@@ -67,6 +68,10 @@ export function Navbar({ profile }: NavbarProps) {
                 />
                 <span className="hidden sm:block max-w-[120px] truncate">
                   {profile.display_name ?? 'My Profile'}
+                </span>
+                <span className="hidden sm:flex items-center gap-0.5 rounded-full bg-accent/10 px-2 py-0.5 text-xs font-semibold text-accent">
+                  <Star className="h-3 w-3" aria-hidden="true" />
+                  {level}
                 </span>
               </Link>
             )}

@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { RoleSelector } from '@/components/auth/RoleSelector'
 import { AvatarBuilder } from '@/components/auth/AvatarBuilder'
-import { AccessibilityPanel } from '@/components/layout/AccessibilityPanel'
 import { PageLoader } from '@/components/shared/LoadingSpinner'
 import { ROLE_LABELS } from '@/lib/constants'
 import type { Profile } from '@/types/database'
@@ -114,15 +113,6 @@ export default function ProfilePage() {
           {saving ? 'Saving…' : saved ? '✓ Saved!' : 'Save changes'}
         </button>
       </form>
-
-      {/* Accessibility settings */}
-      <div className="rounded-xl border border-border bg-card shadow-card overflow-hidden">
-        <div className="px-5 py-4 border-b border-border">
-          <h2 className="text-sm font-semibold text-foreground">Accessibility settings</h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">Font size, theme, zoom, and more</p>
-        </div>
-        <AccessibilityPanel />
-      </div>
 
       {/* Account */}
       <div className="rounded-xl border border-border bg-card p-5 shadow-card space-y-3">

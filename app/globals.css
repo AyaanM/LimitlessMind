@@ -150,3 +150,86 @@
     scrollbar-width: none;
   }
 }
+
+/* ─── Accessibility override classes ─────────────────────────── */
+
+/* Highlight links */
+.highlight-links a {
+  text-decoration: underline !important;
+  text-decoration-thickness: 2px !important;
+  text-underline-offset: 3px !important;
+  background-color: rgba(var(--color-accent-light), 0.6) !important;
+  padding: 0 3px !important;
+  border-radius: 3px !important;
+}
+
+/* Text spacing */
+.text-spacing,
+.text-spacing * {
+  letter-spacing: 0.12em !important;
+  word-spacing: 0.16em !important;
+}
+
+/* Hide images */
+.hide-images img,
+.hide-images [role="img"],
+.hide-images figure,
+.hide-images video {
+  visibility: hidden !important;
+}
+
+/* Dyslexia-friendly font (Lexend) */
+.dyslexia-font,
+.dyslexia-font * {
+  font-family: var(--font-lexend), system-ui, sans-serif !important;
+}
+
+/* Line height */
+.line-height-relaxed,
+.line-height-relaxed p,
+.line-height-relaxed li,
+.line-height-relaxed h1,
+.line-height-relaxed h2,
+.line-height-relaxed h3,
+.line-height-relaxed h4,
+.line-height-relaxed h5,
+.line-height-relaxed h6 {
+  line-height: 2 !important;
+}
+
+.line-height-loose,
+.line-height-loose p,
+.line-height-loose li,
+.line-height-loose h1,
+.line-height-loose h2,
+.line-height-loose h3,
+.line-height-loose h4,
+.line-height-loose h5,
+.line-height-loose h6 {
+  line-height: 2.8 !important;
+}
+
+/* Text align */
+.text-align-left p,
+.text-align-left li,
+.text-align-left h1,
+.text-align-left h2,
+.text-align-left h3,
+.text-align-left h4,
+.text-align-left h5,
+.text-align-left h6,
+.text-align-left blockquote {
+  text-align: left !important;
+}
+
+.text-align-center p,
+.text-align-center li,
+.text-align-center h1,
+.text-align-center h2,
+.text-align-center h3,
+.text-align-center h4,
+.text-align-center h5,
+.text-align-center h6,
+.text-align-center blockquote {
+  text-align: center !important;
+}

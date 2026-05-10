@@ -62,9 +62,9 @@ export default function LibraryPage() {
       const sub2 = sub as { plan: string; status: string } | null
       const premium = sub2?.plan === 'premium' && sub2?.status === 'active'
       setIsPremium(premium)
-      setVideos(((vids ?? []) as Video[]).filter((v) => !v.is_premium || premium))
-      setCollections(((cols ?? []) as Collection[]).filter((c) => !c.is_premium || premium))
-      setPlaylists(((plists ?? []) as Playlist[]).filter((p) => !p.is_premium || premium))
+      setVideos((vids ?? []) as Video[])
+      setCollections((cols ?? []) as Collection[])
+      setPlaylists((plists ?? []) as Playlist[])
       setSpeakers((spks ?? []) as Speaker[])
       setSavedIds(new Set((saved ?? []).map((s) => (s as { video_id: string }).video_id)))
       const pm: Record<string, number> = {}

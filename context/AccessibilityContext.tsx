@@ -6,6 +6,9 @@ import type { FontSize } from '@/types/database'
 export type { FontSize }
 export type ColorTheme = 'light' | 'dark'
 export type ZoomLevel = '100' | '115' | '130'
+export type LineHeight = 'normal' | 'relaxed' | 'loose'
+export type TextAlign = 'default' | 'left' | 'center'
+export type Saturation = 'normal' | 'low' | 'none'
 
 export interface AccessibilitySettings {
   fontSize: FontSize
@@ -13,6 +16,14 @@ export interface AccessibilitySettings {
   highContrast: boolean
   invertColors: boolean
   zoom: ZoomLevel
+  highlightLinks: boolean
+  textSpacing: boolean
+  hideImages: boolean
+  dyslexiaFont: boolean
+  lineHeight: LineHeight
+  textAlign: TextAlign
+  saturation: Saturation
+  readAloud: boolean
 }
 
 const DEFAULTS: AccessibilitySettings = {
@@ -21,6 +32,14 @@ const DEFAULTS: AccessibilitySettings = {
   highContrast: false,
   invertColors: false,
   zoom: '100',
+  highlightLinks: false,
+  textSpacing: false,
+  hideImages: false,
+  dyslexiaFont: false,
+  lineHeight: 'normal',
+  textAlign: 'default',
+  saturation: 'normal',
+  readAloud: false,
 }
 
 interface AccessibilityContextValue extends AccessibilitySettings {
@@ -41,20 +60,32 @@ function applySettings(s: AccessibilitySettings) {
   html.dataset.fontSize = s.fontSize
 
   // Theme
-  if (s.theme === 'dark') html.classList.add('dark')
-  else html.classList.remove('dark')
+  html.classList.toggle('dark', s.theme === 'dark')
 
   // Zoom
-  html.style.setProperty('--ui-zoom', `${s.zoom}%`)
   html.style.zoom = `${s.zoom}%`
 
   // High contrast
-  if (s.highContrast) html.classList.add('high-contrast')
-  else html.classList.remove('high-contrast')
+  html.classList.toggle('high-contrast', s.highContrast)
 
-  // Invert
-  if (s.invertColors) html.style.filter = 'invert(1) hue-rotate(180deg)'
-  else html.style.filter = ''
+  // Combined CSS filter (invert + saturation)
+  const filters: string[] = []
+  if (s.invertColors) filters.push('invert(1) hue-rotate(180deg)')
+  if (s.saturation === 'low') filters.push('saturate(0.5)')
+  else if (s.saturation === 'none') filters.push('saturate(0)')
+  html.style.filter = filters.join(' ')
+
+  // Toggle classes for new options
+  html.classList.toggle('highlight-links', s.highlightLinks)
+  html.classList.toggle('text-spacing', s.textSpacing)
+  html.classList.toggle('hide-images', s.hideImages)
+  html.classList.toggle('dyslexia-font', s.dyslexiaFont)
+
+  html.classList.remove('line-height-relaxed', 'line-height-loose')
+  if (s.lineHeight !== 'normal') html.classList.add(`line-height-${s.lineHeight}`)
+
+  html.classList.remove('text-align-left', 'text-align-center')
+  if (s.textAlign !== 'default') html.classList.add(`text-align-${s.textAlign}`)
 }
 
 export function AccessibilityProvider({ children }: { children: ReactNode }) {

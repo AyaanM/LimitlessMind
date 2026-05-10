@@ -12,16 +12,20 @@ interface Message {
 }
 
 interface AIChatBoxProps {
+  videoTitle?: string
+  videoDescription?: string
+  /** @deprecated pass videoTitle + videoDescription instead */
   context?: string
 }
 
-export function AIChatBox({ context }: AIChatBoxProps) {
+export function AIChatBox({ videoTitle, videoDescription, context }: AIChatBoxProps) {
+  const title = videoTitle ?? context
+  const welcome = videoDescription
+    ? `Hello! I've read the description for "${title}". Ask me anything about what this video covers and I'll do my best to help. Take your time — there's no rush.`
+    : "Hello! I'm here to help you learn. Ask me anything about this video or autism resources in general. Take your time — there's no rush."
+
   const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 'welcome',
-      role: 'assistant',
-      content: "Hello! I'm here to help you learn. You can ask me anything about the topics covered in this video, or about autism resources in general. Take your time — there's no rush.",
-    },
+    { id: 'welcome', role: 'assistant', content: welcome },
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -50,7 +54,7 @@ export function AIChatBox({ context }: AIChatBoxProps) {
       const res = await fetch('/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text, context }),
+        body: JSON.stringify({ message: text, videoTitle: title, videoDescription }),
       })
       const data = await res.json()
 

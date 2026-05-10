@@ -6,16 +6,26 @@ interface PrintableCertificateProps {
 }
 
 export function PrintableCertificate({ cert }: PrintableCertificateProps) {
+  const isSilver = cert.title.includes('Silver Autism Edmonton')
+
   return (
     <div
       id="certificate-print"
-      className="mx-auto max-w-2xl rounded-2xl border-4 border-sage/40 bg-white p-10 text-center shadow-xl print:shadow-none print:border-sage/60"
+      className={`mx-auto max-w-2xl rounded-2xl border-4 bg-white p-10 text-center shadow-xl print:shadow-none ${isSilver ? 'border-[#a8a9ad] print:border-[#888]' : 'border-sage/40 print:border-sage/60'}`}
+      style={isSilver ? { background: 'linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%)' } : undefined}
     >
       {/* Header */}
       <div className="space-y-1 mb-8">
-        <div className="text-3xl" aria-hidden="true">🏅</div>
-        <p className="text-sm font-semibold uppercase tracking-widest text-sage">Certificate of Completion</p>
+        <div className="text-3xl" aria-hidden="true">{isSilver ? '🥈' : '🏅'}</div>
+        <p className={`text-sm font-semibold uppercase tracking-widest ${isSilver ? 'text-[#888]' : 'text-sage'}`}>
+          {isSilver ? 'Silver Achievement Certificate' : 'Certificate of Completion'}
+        </p>
         <p className="text-xs text-muted-foreground">Autism Edmonton Learning Platform</p>
+        {isSilver && (
+          <p className="text-xs font-medium text-[#a8a9ad] mt-1">
+            Awarded for completing 2 videos and 5 game sessions (30 min each)
+          </p>
+        )}
       </div>
 
       {/* Body */}

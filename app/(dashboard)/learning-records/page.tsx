@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Award, Clock, CheckCircle, BookOpen, GraduationCap } from 'lucide-react'
+import { Award, Clock, CheckCircle, BookOpen, GraduationCap, Medal } from 'lucide-react'
 import { CertificateCard } from '@/components/shared/CertificateCard'
 import { PageLoader } from '@/components/shared/LoadingSpinner'
 import { EmptyState } from '@/components/shared/EmptyState'
@@ -29,17 +29,44 @@ export default function LearningRecordsPage() {
         { data: watchData },
         { data: profileData },
         { data: vidData },
+        { data: gameData },
       ] = await Promise.all([
         (supabase as any).from('certificates').select('*').eq('user_id', user.id).order('issued_at', { ascending: false }),
         supabase.from('watch_progress').select('*').eq('user_id', user.id).order('last_watched_at', { ascending: false }),
         supabase.from('profiles').select('display_name').eq('id', user.id).single(),
         supabase.from('videos').select('id, title, category, duration_seconds, topic_id, certificate_eligible').order('title'),
+        (supabase as any).from('game_progress').select('*').eq('user_id', user.id),
       ])
 
-      setCerts((certData ?? []) as Certificate[])
-      setWatchRows((watchData ?? []) as WatchProgress[])
-      setDisplayName((profileData as any)?.display_name ?? 'Learner')
-      setVideos((vidData ?? []) as Video[])
+      const certs = (certData ?? []) as Certificate[]
+      const watches = (watchData ?? []) as WatchProgress[]
+      const name = (profileData as any)?.display_name ?? 'Learner'
+      const vids = (vidData ?? []) as Video[]
+      const games = (gameData ?? []) as { game_id: string; completed: boolean; play_seconds?: number }[]
+
+      // Auto-issue silver certificate if earned and not already issued
+      const completedWatches = watches.filter((w) => w.completed)
+      const qualifyingGames = games.filter((g) => (g.play_seconds ?? 0) >= 1800)
+      const hasSilver = certs.some((c) => c.title.includes('Silver Autism Edmonton'))
+
+      if (completedWatches.length >= 2 && qualifyingGames.length >= 5 && !hasSilver) {
+        const code = `SILVER-${Math.random().toString(36).slice(2, 10).toUpperCase()}`
+        await (supabase as any).from('certificates').insert({
+          user_id: user.id,
+          title: 'Silver Autism Edmonton Achievement',
+          recipient_name: name,
+          learning_hours: Math.round(watches.reduce((s, w) => s + w.progress_seconds, 0) / 3600 * 10) / 10,
+          certificate_code: code,
+        })
+        const { data: refreshed } = await (supabase as any).from('certificates').select('*').eq('user_id', user.id).order('issued_at', { ascending: false })
+        setCerts((refreshed ?? []) as Certificate[])
+      } else {
+        setCerts(certs)
+      }
+
+      setWatchRows(watches)
+      setDisplayName(name)
+      setVideos(vids)
       setLoading(false)
     }
     load()
@@ -49,10 +76,6 @@ export default function LearningRecordsPage() {
 
   const completedRows = watchRows.filter((w) => w.completed)
   const inProgressRows = watchRows.filter((w) => !w.completed && w.progress_seconds > 0)
-  const totalSeconds = watchRows.reduce((sum, w) => sum + w.progress_seconds, 0)
-  const totalHours = (totalSeconds / 3600).toFixed(1)
-  const totalMinutes = Math.round(totalSeconds / 60)
-
   const videoMap = Object.fromEntries(videos.map((v) => [v.id, v]))
 
   return (
@@ -63,13 +86,7 @@ export default function LearningRecordsPage() {
       </div>
 
       {/* Summary stats */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <ProgressCard
-          label="Total watch time"
-          value={totalMinutes >= 60 ? `${totalHours}h` : `${totalMinutes}m`}
-          icon="⏱️"
-          color="blue"
-        />
+      <div className="grid gap-4 sm:grid-cols-3">
         <ProgressCard
           label="Videos completed"
           value={completedRows.length}
@@ -89,6 +106,12 @@ export default function LearningRecordsPage() {
           color="green"
         />
       </div>
+
+      {/* Silver cert progress */}
+      <SilverCertProgress
+        completedVideos={completedRows.length}
+        earned={certs.some((c) => c.title.includes('Silver Autism Edmonton'))}
+      />
 
       {/* Certificates section */}
       <section className="space-y-4" aria-label="Your certificates">
@@ -197,6 +220,49 @@ export default function LearningRecordsPage() {
           </div>
         )}
       </section>
+    </div>
+  )
+}
+
+function SilverCertProgress({ completedVideos, earned }: { completedVideos: number; earned: boolean }) {
+  if (earned) {
+    return (
+      <div className="rounded-xl border-2 border-[#a8a9ad] bg-gradient-to-r from-[#e8e8e8] to-[#f5f5f5] p-5 flex items-center gap-4">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#a8a9ad] shrink-0">
+          <Medal className="h-6 w-6 text-white" />
+        </div>
+        <div>
+          <p className="font-bold text-[#4a4a4a]">Silver Autism Edmonton Certificate Earned!</p>
+          <p className="text-sm text-muted-foreground">Congratulations — see your certificates below.</p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="rounded-xl border border-[#c0c0c0] bg-[#f8f8f8] p-5 space-y-3">
+      <div className="flex items-center gap-2">
+        <Medal className="h-5 w-5 text-[#a8a9ad]" />
+        <p className="font-semibold text-foreground text-sm">Silver Autism Edmonton Certificate</p>
+      </div>
+      <p className="text-xs text-muted-foreground">
+        Watch 2 videos and play 5 games for at least 30 minutes each to earn your Silver certificate.
+      </p>
+      <div className="space-y-2">
+        <div>
+          <div className="flex justify-between mb-1">
+            <span className="text-xs text-muted-foreground">Videos completed</span>
+            <span className="text-xs font-medium text-foreground">{Math.min(completedVideos, 2)} / 2</span>
+          </div>
+          <div className="h-2 rounded-full bg-border overflow-hidden">
+            <div
+              className="h-full rounded-full bg-[#a8a9ad] transition-all"
+              style={{ width: `${Math.min((completedVideos / 2) * 100, 100)}%` }}
+            />
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground">Game time is tracked automatically when you play — at least 30 minutes per game session counts.</p>
+      </div>
     </div>
   )
 }

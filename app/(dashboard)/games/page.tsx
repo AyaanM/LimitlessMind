@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { GameCard } from '@/components/games/GameCard'
 import { GameModal } from '@/components/games/GameModal'
@@ -15,6 +15,7 @@ export default function GamesPage() {
   const [userId, setUserId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [activeGame, setActiveGame] = useState<Game | null>(null)
+  const gameStartTime = useRef<number | null>(null)
 
   useEffect(() => {
     async function load() {
@@ -42,15 +43,23 @@ export default function GamesPage() {
 
   async function handleGameComplete(gameId: string, score: number) {
     if (!userId) return
+    const playSecs = gameStartTime.current ? Math.round((Date.now() - gameStartTime.current) / 1000) : 0
+    gameStartTime.current = null
     const supabase = createClient()
     await (supabase.from('game_progress') as any).upsert({
       user_id: userId,
       game_id: gameId,
       completed: true,
       score,
+      play_seconds: playSecs,
       played_at: new Date().toISOString(),
     }, { onConflict: 'user_id,game_id' })
     setCompletedIds((prev) => new Set([...prev, gameId]))
+    fetch('/api/gamification/award', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'complete_game' }),
+    }).catch(() => {})
   }
 
   if (loading) return <PageLoader />
@@ -78,7 +87,7 @@ export default function GamesPage() {
                 game={game}
                 isCompleted={completedIds.has(game.id)}
                 isPremiumUser={isPremium}
-                onPlay={setActiveGame}
+                onPlay={(game) => { gameStartTime.current = Date.now(); setActiveGame(game) }}
               />
             ))}
           </div>
@@ -103,7 +112,7 @@ export default function GamesPage() {
                 game={game}
                 isCompleted={completedIds.has(game.id)}
                 isPremiumUser={isPremium}
-                onPlay={setActiveGame}
+                onPlay={(game) => { gameStartTime.current = Date.now(); setActiveGame(game) }}
               />
             ))}
           </div>
