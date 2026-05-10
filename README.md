@@ -16,7 +16,7 @@ Some pages may require sign-in because the LMS includes user accounts, protected
 
 This project was created by our natHacks 2026 team.
 
-- Aidan and AyaanM worked together on the core codebase, including the HTML pages, web app structure, SQL database design, Java app component, frontend styling, and LMS feature implementation.
+- Aidan and Ayaan worked together on the core codebase, including the HTML pages, web app structure, SQL database design, Java app component, frontend styling, and LMS feature implementation.
 - Other team members contributed to research, planning, design feedback, testing, and presentation preparation.
 
 This project was a collaborative effort focused on building an accessible learning platform for Autism Edmonton.
@@ -45,6 +45,14 @@ The design prioritizes accessibility, simplicity, low sensory load, and clear na
 - **AI**: Placeholder routes ready for Anthropic SDK integration
 
 ## Getting started
+
+This project is already available as a live website:
+
+https://limitless-mind-seven.vercel.app/resources
+
+Some pages may require sign-in because the LMS includes user accounts, protected learning resources, progress tracking, subscription-related features, and employee/admin tools.
+
+For developers who want to run or modify the project locally:
 
 ### 1. Clone the repository
 
@@ -92,13 +100,13 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
 NEXT_PUBLIC_MOCK_SUBSCRIPTION=
 ```
 
-### 5. Run locally
+### 5. Run locally for development
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Local development normally runs at `http://localhost:3000`, but the public website should be accessed through the live website link above.
 
 ## Key features
 
