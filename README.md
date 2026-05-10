@@ -2,6 +2,16 @@
 
 A calm, accessible Netflix-style learning management system for the autism community. Built for autistic adults, caregivers, professionals, educators, and employers.
 
+This website was developed as part of natHacks / natIgnite 2026 in collaboration with Autism Edmonton as the problem provider. The platform is designed to make autism-related learning resources easier to access through organized video learning, user profiles, progress tracking, accessibility tools, games, resources, and future AI-supported learning features.
+
+## Website
+
+The live website can be viewed here:
+
+https://limitless-mind-seven.vercel.app/resources
+
+Some pages may require sign-in because the LMS includes user accounts, protected learning resources, progress tracking, subscription-related features, and employee/admin tools.
+
 ## Contributors
 
 This project was created by our natHacks 2026 team.
@@ -10,6 +20,22 @@ This project was created by our natHacks 2026 team.
 - Other team members contributed to research, planning, design feedback, testing, and presentation preparation.
 
 This project was a collaborative effort focused on building an accessible learning platform for Autism Edmonton.
+
+## Project Purpose
+
+Autism Edmonton LMS is designed to extend Autism Edmonton’s learning and support resources into a structured digital platform. The goal is to create a calm and accessible online space where users can browse learning content, watch videos, explore support resources, play educational games, track progress, and access features based on their profile role.
+
+The platform is intended for:
+
+- Autistic adults
+- Caregivers, parents, and guardians
+- Professionals
+- Educators
+- Employers
+- Community members looking for autism-related learning resources
+
+The design prioritizes accessibility, simplicity, low sensory load, and clear navigation.
+
 ## Tech stack
 
 - **Frontend**: Next.js 14 (App Router) + TypeScript
@@ -20,26 +46,53 @@ This project was a collaborative effort focused on building an accessible learni
 
 ## Getting started
 
-### 1. Clone and install
+### 1. Clone the repository
+
+```bash
+git clone <repository-url>
+cd <project-folder>
+```
+
+### 2. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 2. Set up Supabase
+### 3. Set up Supabase
 
 1. Create a project at [supabase.com](https://supabase.com)
-2. Run `supabase/schema.sql` in the SQL Editor
-3. Run `supabase/seed.sql` to add sample data
+2. Open the Supabase SQL Editor
+3. Run `supabase/schema.sql`
+4. Run `supabase/seed.sql` to add sample data
 
-### 3. Configure environment
+### 4. Configure environment variables
+
+Copy the example environment file:
 
 ```bash
 cp .env.example .env.local
-# Fill in your Supabase URL and anon key
 ```
 
-### 4. Run locally
+Then fill in the required Supabase environment variables in `.env.local`.
+
+Common required variables may include:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+```
+
+Optional future variables may include:
+
+```env
+ANTHROPIC_API_KEY=
+STRIPE_SECRET_KEY=
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+NEXT_PUBLIC_MOCK_SUBSCRIPTION=
+```
+
+### 5. Run locally
 
 ```bash
 npm run dev
