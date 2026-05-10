@@ -16,7 +16,7 @@ Some pages may require sign-in because the LMS includes user accounts, protected
 
 This project was created by our natHacks 2026 team.
 
-- Aidan and AyaanM worked together on the core codebase, including the HTML pages, web app structure, SQL database design, Java app component, frontend styling, and LMS feature implementation.
+- Aidan and Ayaan worked together on the core codebase, including the HTML pages, web app structure, SQL database design, Java app component, frontend styling, and LMS feature implementation.
 - Other team members contributed to research, planning, design feedback, testing, and presentation preparation.
 
 This project was a collaborative effort focused on building an accessible learning platform for Autism Edmonton.
