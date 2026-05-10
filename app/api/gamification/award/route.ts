@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
     })
     const allBadges = [...(p.badges ?? []), ...newBadges]
 
-    await supabase.from('profiles').update({
+    await (supabase as any).from('profiles').update({
       xp: newXP,
       level: newLevel.level,
       streak_days: streakDays,
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
       badges: allBadges,
       total_videos_completed: totalVids,
       total_games_completed: totalGames,
-    } as any).eq('id', user.id)
+    }).eq('id', user.id)
 
     return NextResponse.json({
       xpGained: gained,
